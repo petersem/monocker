@@ -19,7 +19,7 @@ version: '2.4'
 services:
   monocker:
     container_name: monocker
-    image: monocker
+    image: petersem/monocker
     environment:
       NODE_ENV: production
       TELEGRAM_ID: 'your_telegram_id'
