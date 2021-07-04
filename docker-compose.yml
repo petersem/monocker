@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  monocker:
+    container_name: monocker
+    image: monocker
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      TELEGRAM_ID: ''
+      TELEGRAM_CHAT_ID: ''
+      LABEL_DISABLE: 'false'
+      LABEL_ENABLE: 'false'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3300:3000
