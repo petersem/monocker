@@ -25,7 +25,6 @@ services:
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
-      # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: ''
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
