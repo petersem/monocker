@@ -33,6 +33,6 @@ services:
 ```
 > For Telegram: See documentation for how to obtain ID values. 
 
-> For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/telegram.PNG)
+> For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 
 This application uses *semantic* versioning. See [here](https://semver.org/) for more details. 
