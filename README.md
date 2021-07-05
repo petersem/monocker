@@ -23,6 +23,8 @@ services:
     container_name: monocker
     image: petersem/monocker
     environment:
+      # Optional label to preface messages. Handy if you are running multiple versions of Monocker
+      SERVER_LABEL: 'Dev'
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'

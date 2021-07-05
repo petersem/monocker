@@ -11,6 +11,7 @@ let docker = new Docker({socketPath: '/var/run/docker.sock'});
 //     port: 2375 //process.env.DOCKER_PORT || 2375
 // });
 const NODE_ENV = process.env.NODE_ENV || "production";
+const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
 const LABEL_ENABLE = process.env.MONOCKER_LABEL_DISABLE || 'false';
 const LABEL_DISABLE = process.env.MONOCKER_LABEL_DISABLE || 'false';
@@ -46,19 +47,23 @@ async function sendPushover(title, message){
 
 
 async function send(message) {
+    let title = "MONOCKER";
+    if(SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")"
+
     switch(msgDetails[0].toLowerCase()) {
         case "telegram":
-            sendTelegram(`<b>MONOCKER</b>
+            sendTelegram(`<b>` + title + `</b>
 ` + message);
             break;
         case "pushbullet":
-            sendPushbullet("MONOCKER", message);
+            sendPushbullet(title, message);
             break;
         case "pushover":
-            // not implemented
+            sendPushover(title, message);
             break;
         case "default":
-            console.log("* No valid messing platform specified - logged only")
+            // do nothing
+            break;
     }
 }
 
