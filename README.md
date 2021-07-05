@@ -8,11 +8,10 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change
 - Pushbullet integration
 - Pushover integration
 - Monitors 'state' changes for all containers (every 10 seconds)
+- Specific inclusions or exclusions of containers to monitor
 
 ## Future Considerations
-- Additional messaging platforms
-- Only monitor containers with a specific label
-- Exclude monitoring of containers with a specific label
+- Additional messaging platform support
 
 ## Installation
 ```ya
@@ -30,6 +29,8 @@ services:
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: ''
+      # includes or excludes specified containers - default behaviour is false
+      LABEL_ENABLE: 'false'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
@@ -37,5 +38,20 @@ services:
 - For Telegram: See documentation for how to obtain ID values. 
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
+
+### LABEL_ENABLE
+This is an optional value, and defaults to false if it is not specified. This feature allows you to specify (with labels) 'either' specific containers to monitor or exclude from monitoring. 
+- If it is set to false, then all containers will be monitored `except` for ones with the following label in their YAML.
+```ya
+    labels:
+      monocker.enable: 'false'
+```
+- If it is set to true, only container with the following label will be monitored
+```ya
+    labels:
+      monocker.enable: 'true'
+```
+- If you just want to monitor everything, then set `LABEL_ENABLE: 'false'` or just leave it out altogether.
+
 
 This application uses *semantic* versioning. See [here](https://semver.org/) for more details. 
