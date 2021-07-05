@@ -1,5 +1,5 @@
 # Monocker
-Monitors Docker (MONitors dOCKER) containers and alerts on state change
+Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change
 
 ![Telegram Alerts](https://raw.githubusercontent.com/petersem/monocker/master/doco/telegram.PNG)
 
@@ -7,7 +7,7 @@ Monitors Docker (MONitors dOCKER) containers and alerts on state change
 - Telegram integration
 - Pushbullet integration
 - Pushover integration
-- Monitors all containers (every 10 seconds)
+- Monitors 'state' changes for all containers (every 10 seconds)
 
 ## Future Considerations
 - Additional messaging platforms
