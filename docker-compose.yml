@@ -8,11 +8,15 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
+      # Optional label to preface messages. Handy if you are running multiple versions of Monocker
+      SERVER_LABEL: 'Dev'
+      # Specify the messaging platform and details, or omit this if only wanting container logs
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
-      # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
-      # MESSAGE_PLATFORM: ''
+      # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
+
+      LABEL_DISABLE: 'false'
+      LABEL_ENABLE: 'false'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
