@@ -2,6 +2,7 @@ const Telegram = require('telegram-notify');
 const Docker = require('dockerode');
 const pjson = require("./package.json");
 const PushBullet = require('pushbullet');
+const Pushover = require('node-pushover');
 
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
@@ -31,13 +32,16 @@ async function sendTelegram(message){
 
 async function sendPushbullet(title, message){
     var pusher = new PushBullet(msgDetails[1]);
-
     pusher.note(msgDetails[2], title, message, function(error, response) {});
 }
 
-async function sendPushover(title, body){
-    //let notify = new Telegram({token:TID, chatId:TCID});
-    //await notify.send(message, {timeout: 10000}, {parse_mode: 'html'});
+async function sendPushover(title, message){
+    var push = new Pushover({
+        token: msgDetails[2],
+        user: msgDetails[1]
+    });
+    push.send(title, message);
+
 }
 
 
