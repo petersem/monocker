@@ -13,12 +13,12 @@ let docker = new Docker({socketPath: '/var/run/docker.sock'});
 const NODE_ENV = process.env.NODE_ENV || "production";
 const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
-const LABEL_ENABLE = process.env.MONOCKER_LABEL_DISABLE || 'false';
-const LABEL_DISABLE = process.env.MONOCKER_LABEL_DISABLE || 'false';
+const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
 
 let msgDetails = MESSAGE_PLATFORM.split('@');
-
+let isFirstRun = true;
 let monContainers = [];
+
 console.log("-------------------------------------------------------");
 console.log(" Monocker - MONitor dOCKER container states");
 console.log(" Developed by Matt Petersen - Brisbane Australia");
@@ -42,9 +42,7 @@ async function sendPushover(title, message){
         user: msgDetails[1]
     });
     push.send(title, message);
-
 }
-
 
 async function send(message) {
     let title = "MONOCKER";
@@ -68,36 +66,67 @@ async function send(message) {
 }
 
 async function list(){
+    let opts;
+
+    if(LABEL_ENABLE=='true'){
+        opts = {
+            "filters": '{"label": ["monocker.enable=true"]}'
+        };
+    }
+    else{
+        opts = {all: true};
+    }
+
     //let now = new Date();
     //console.log(now.toLocaleString() + " - Container scan");
-    docker.listContainers({all: true}, function(err, containers) {
+    docker.listContainers(opts, function(err, containers) {
         // check for changes in status (first run is populating data only)
         let newConArray = [];
         containers.forEach(c => {
-            // determine if covered by healthcheck
-            let hcStatus = "";
-            if(c.Status.includes("(healthy)")) hcStatus="(healthy)"
-            if(c.Status.includes("(unhealthy)")) hcStatus="(unhealthy)"
-            if(monContainers.includes(c.Id + "," + c.State + "," + hcStatus) == false && monContainers.length !== 0 ){
-                console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
-                send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus)
+            // if label_enable is false then exclude any specifically false labelled containers
+            if(LABEL_ENABLE=='false' && JSON.stringify(c.Labels).includes('"monocker.enable":"false"')){
+                if(isFirstRun==true){
+                    console.log('    - Excluding: ' + c.Names[0].replace("/",""));
+                    send('Excluding: ' + c.Names[0].replace("/",""));
+                }
             }
-            // create new container array
-            newConArray.push(c.Id + "," + c.State + "," + hcStatus);
+            else{
+                // If label_enable is true, list the specifically included containers
+                if(LABEL_ENABLE=='true' && JSON.stringify(c.Labels).includes('"monocker.enable":"true"')){
+                    if(isFirstRun==true){
+                        console.log('    - Monitoring: ' + c.Names[0].replace("/",""));
+                        send('Monitoring: ' + c.Names[0].replace("/",""));
+                    }
+                }
+                // determine if covered by healthcheck
+                let hcStatus = "";
+                if(c.Status.includes("(healthy)")) hcStatus="(healthy)"
+                if(c.Status.includes("(unhealthy)")) hcStatus="(unhealthy)"
+                if(monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0 ){
+                    console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
+                    send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus)
+                }
+                // create new container array
+                newConArray.push(c.Id + "," + c.State + "," + c.Names[0] + ","  + hcStatus);
+            }
         });
+        if(isFirstRun==true){
+            console.log("    - Currently monitoring " + newConArray.length + " (running) containers");
+            send("Currently monitoring " + newConArray.length + " (running) containers");
+            isFirstRun=false;
+        }
 
-//         // check if any containers have been deleted between scans
-//         if(monContainers.length !== 0 ){
-//             monContainers.forEach(c => {
-//                 let delArray = newConArray.filter(nc => nc.includes(c.Id));
-//                 // if no match in history array and latest scan, then is deleted
-//                 if(delArray.length==0){
-//                     console.log("    - " +c.Names[0].replace("/","") + ": Deleted");
-//                     send(`<b>MONOCKER</b>
-// ` + c.Names[0].replace("/","") +": <i>Deleted</i>")
-//                 }
-//             });
-//         }
+        // check if any containers have been deleted between scans
+        if(monContainers.length !== 0 ){
+            monContainers.forEach(c => {
+                let delArray = newConArray.filter(nc => nc.includes(c.split(",")[0]));
+                // if no match in history array and latest scan, then is deleted
+                if(delArray.length==0){
+                    console.log("    - " + c.split(",")[2].replace("/","") + ": exited");
+                    send(c.split(",")[2].replace("/","") +": exited")
+                }
+            });
+        }
 
         // assign new array to be current array state
         monContainers = newConArray;
