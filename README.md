@@ -57,4 +57,9 @@ This is an optional value, and defaults to false if it is not specified. This fe
 - If you just want to monitor everything, then set `LABEL_ENABLE: 'false'` or just leave it out altogether.
 
 
+> If you like my work, you can make a dontation to say thanks! [Buy me a coffee](https://www.paypal.com/paypalme/thanksmp)
+
+
+> Discuss issues or feature requests in the monocker channel on [Discord](https://discord.gg/NcKJTKN9yP)
+
 This application uses *semantic* versioning. See [here](https://semver.org/) for more details. 
