@@ -14,10 +14,18 @@ const NODE_ENV = process.env.NODE_ENV || "production";
 const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
 const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
+const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
 
 let msgDetails = MESSAGE_PLATFORM.split('@');
 let isFirstRun = true;
 let monContainers = [];
+let offlineStates = [
+    'exited',
+    'dead',
+    'running (unhealthy)',
+    'paused'
+];
+let runClock;
 
 console.log("-------------------------------------------------------");
 console.log(" Monocker - MONitor dOCKER container states");
@@ -103,8 +111,17 @@ async function list(){
                 if(c.Status.includes("(healthy)")) hcStatus="(healthy)"
                 if(c.Status.includes("(unhealthy)")) hcStatus="(unhealthy)"
                 if(monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0 ){
-                    console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
-                    send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus)
+                    // if only offline is set, then only show state changes that are offline
+                    if(ONLY_OFFLINE_STATES=='true'){
+                        if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
+                            console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
+                            send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus);
+                        }
+                    }
+                    else{
+                        console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
+                        send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus);
+                    }
                 }
                 // create new container array
                 newConArray.push(c.Id + "," + c.State + "," + c.Names[0] + ","  + hcStatus);
@@ -134,9 +151,22 @@ async function list(){
 }
 
 async function run(){
+    // stop timer to ensure no race conditions
+    clearInterval(runClock);
+    // run check
     await list();
+    // restart timer
+    runClock = setInterval(run,10000);
 }
 
-send("Monitoring started")
-console.log("Monitoring started")
-setInterval(run,10000);
+console.log(`Monitoring started 
+     - Messenging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+     - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
+     - Only include labelled containers: ` + LABEL_ENABLE);
+send(`Monitoring started 
+     - Messenging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+     - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
+     - Only include labelled containers: ` + LABEL_ENABLE);
+
+// start processing
+run();

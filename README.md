@@ -29,8 +29,10 @@ services:
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: ''
-      # includes or excludes specified containers - default behaviour is false
+      # Optional - includes or excludes specified containers - default behaviour is false
       LABEL_ENABLE: 'false'
+      # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead) - default is false
+      ONLY_OFFLINE_STATES: 'false'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
@@ -39,14 +41,14 @@ services:
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 
-### LABEL_ENABLE
+#### LABEL_ENABLE
 This is an optional value, and defaults to false if it is not specified. This feature allows you to specify (with labels) 'either' specific containers to monitor or exclude from monitoring. 
 - If it is set to false, then all containers will be monitored `except` for ones with the following label in their YAML.
 ```ya
     labels:
       monocker.enable: 'false'
 ```
-- If it is set to true, only container with the following label will be monitored
+- If it is set to true, `only` containers with the following label will be monitored
 ```ya
     labels:
       monocker.enable: 'true'
