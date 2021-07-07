@@ -7,6 +7,7 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change
 - Telegram integration
 - Pushbullet integration
 - Pushover integration
+- Discord integration (via webhooks)
 - Monitors 'state' changes for all containers (every 10 seconds)
 - Specific inclusions or exclusions of containers to monitor
 - Optionally, only alert on state changes to (paused, exited, running (unhealthy), or dead)
@@ -29,6 +30,7 @@ services:
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
+      # MESSAGE_PLATFORM: 'discord@webhook_url'
       # MESSAGE_PLATFORM: ''
       # Optional - includes or excludes specified containers - default behaviour is false
       LABEL_ENABLE: 'false'
@@ -41,6 +43,7 @@ services:
 - For Telegram: See documentation for how to obtain ID values. 
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
+- For Discord: See Discord doco for how to create a webhook and get the url
 
 #### LABEL_ENABLE
 This is an optional value, and defaults to false if it is not specified. This feature allows you to specify (with labels) 'either' specific containers to monitor or exclude from monitoring. 

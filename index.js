@@ -3,6 +3,7 @@ const Docker = require('dockerode');
 const pjson = require("./package.json");
 const PushBullet = require('pushbullet');
 const Pushover = require('node-pushover');
+const { Webhook } = require('discord-webhook-node');
 
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
@@ -52,6 +53,13 @@ async function sendPushover(title, message){
     push.send(title, message);
 }
 
+async function sendDiscord(title, message){
+    const hook = new Webhook(msgDetails[1]);
+    hook.setUsername(title);
+    hook.send(message);
+}
+
+
 async function send(message) {
     let title = "MONOCKER";
     if(SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")"
@@ -66,6 +74,9 @@ async function send(message) {
             break;
         case "pushover":
             sendPushover(title, message);
+            break;
+        case "discord":
+            sendDiscord(title, message);
             break;
         case "default":
             // do nothing
