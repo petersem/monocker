@@ -66,3 +66,5 @@ This is an optional value, and defaults to false if it is not specified. This fe
 > Discuss issues or feature requests in the monocker channel on [Discord](https://discord.gg/NcKJTKN9yP)
 
 This application uses *semantic* versioning. See [here](https://semver.org/) for more details. 
+
+Link to code on [GitHub](https://github.com/petersem/monocker)
