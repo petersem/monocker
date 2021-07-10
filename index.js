@@ -171,11 +171,11 @@ async function run(){
 }
 
 console.log(`Monitoring started 
-     - Messenging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+     - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
      - Only include labelled containers: ` + LABEL_ENABLE);
 send(`Monitoring started 
-     - Messenging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+     - Messanging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
      - Only include labelled containers: ` + LABEL_ENABLE);
 
