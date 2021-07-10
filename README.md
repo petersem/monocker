@@ -37,7 +37,7 @@ services:
       # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead) - default is false
       ONLY_OFFLINE_STATES: 'false'
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 ```
 - For Telegram: See documentation for how to obtain ID values. 
