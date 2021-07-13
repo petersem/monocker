@@ -31,4 +31,4 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: user/app:latest
+          tags: petersem/monocker:latest
