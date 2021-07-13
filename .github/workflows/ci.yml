@@ -1,6 +1,4 @@
 name: ci
-run: |
-REPO="petersem/monocker"
 
 on:
   push:
@@ -11,6 +9,10 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Prepare
+        id: prep
+        run: |
+          REPO="petersem/monocker" 
       -
         name: Checkout
         uses: actions/checkout@v2
