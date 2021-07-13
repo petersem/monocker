@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - 'master'
-    tags:
-      - 'v*.*.*'
-      - 'latest'
 
 jobs:
   docker:
@@ -15,21 +12,6 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            petersem/monocker
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -49,6 +31,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm/v7,linux/arm/v6,linux/arm64/v8
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: petersem/monocker:latest, petersem/monocker:${{ github.run_number }}
+
  
