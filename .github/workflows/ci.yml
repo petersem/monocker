@@ -1,5 +1,6 @@
 name: ci
-run: REPO="petersem/monocker"
+run: |
+REPO="petersem/monocker"
 
 on:
   push:
