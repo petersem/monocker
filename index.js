@@ -16,6 +16,7 @@ const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
 const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
 const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
+const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
 
 let msgDetails = MESSAGE_PLATFORM.split('@');
 let isFirstRun = true;
@@ -34,7 +35,7 @@ console.log(" Developed by Matt Petersen - Brisbane Australia");
 console.log(" ");
 console.log(" Version: " + pjson.version);
 console.log("-------------------------------------------------------");
-
+console.log(" ");
 async function sendTelegram(message){
     let notify = new Telegram({token:msgDetails[1], chatId:msgDetails[2]});
     await notify.send(message, {timeout: 10000}, {parse_mode: 'html'});
@@ -122,16 +123,22 @@ async function list(){
                 if(c.Status.includes("(healthy)")) hcStatus="(healthy)"
                 if(c.Status.includes("(unhealthy)")) hcStatus="(unhealthy)"
                 if(monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0 ){
-                    // if only offline is set, then only show state changes that are offline
-                    if(ONLY_OFFLINE_STATES=='true'){
-                        if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
+                    // exclude exited status if set
+                    if(EXCLUDE_EXITED == 'true' && c.State.toLocaleLowerCase() == 'exited'){
+                        // ignore 
+                    }
+                    else{
+                        // if only offline is set, then only show state changes that are offline
+                        if(ONLY_OFFLINE_STATES=='true'){
+                            if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
+                                console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
+                                send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus);
+                            }
+                        }
+                        else{
                             console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
                             send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus);
                         }
-                    }
-                    else{
-                        console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
-                        send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus);
                     }
                 }
                 // create new container array
@@ -139,7 +146,7 @@ async function list(){
             }
         });
         if(isFirstRun==true){
-            console.log("    - Currently monitoring " + newConArray.length + " (running) containers");
+            console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
             send("Currently monitoring " + newConArray.length + " (running) containers");
             isFirstRun=false;
         }
@@ -149,7 +156,7 @@ async function list(){
             monContainers.forEach(c => {
                 let delArray = newConArray.filter(nc => nc.includes(c.split(",")[0]));
                 // if no match in history array and latest scan, then is deleted
-                if(delArray.length==0){
+                if(delArray.length==0 && EXCLUDE_EXITED !== 'true'){
                     console.log("    - " + c.split(",")[2].replace("/","") + ": exited");
                     send(c.split(",")[2].replace("/","") +": exited")
                 }
@@ -173,11 +180,13 @@ async function run(){
 console.log(`Monitoring started 
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
-     - Only include labelled containers: ` + LABEL_ENABLE);
+     - Only include labelled containers: ` + LABEL_ENABLE + ` 
+     - Do not monitor 'Exited': ` + EXCLUDE_EXITED);
 send(`Monitoring started 
-     - Messanging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+     - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
-     - Only include labelled containers: ` + LABEL_ENABLE);
+     - Only include labelled containers: ` + LABEL_ENABLE + `
+     - Do not monitor 'Exited': ` + EXCLUDE_EXITED);
 
 // start processing
 run();

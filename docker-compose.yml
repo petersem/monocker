@@ -10,8 +10,12 @@ services:
     environment:
       # Optional label to preface messages. Handy if you are running Monocker on different machines
       SERVER_LABEL: 'Dev'
+      # Optional - regardless of any other settings, you can ignore or include 'exited'
+      EXCLUDE_EXITED: 'false'
+      # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead)
+      ONLY_OFFLINE_STATES: 'true'
+      
       # Specify the messaging platform and details, or omit this if only wanting container logs
-
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
@@ -21,8 +25,7 @@ services:
       # If missing or set to false (default), any containers with a "monocker.enable: 'false'" label will be excluded, and all others monitored.
       # If set to true, only containers with a "monocker.enable: 'true'" label will be included.
       LABEL_ENABLE: 'false'
-      # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead)
-      ONLY_OFFLINE_STATES: 'true'
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
