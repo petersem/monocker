@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: petersem/monocker
-          tags: latest, ${{ github.run_number }}
+          tags: latest
       - name: Run a one-line script
         run: echo Hello, world!
       - name: Run a multi-line script
