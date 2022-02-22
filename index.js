@@ -5,7 +5,7 @@ const PushBullet = require('pushbullet');
 const Pushover = require('node-pushover');
 const { Webhook } = require('discord-webhook-node');
 
-let docker = new Docker({socketPath: '/var/run/docker.sock'});
+let docker = new Docker();
 // var docker = new Docker({
 //     protocol: 'http', //you can enforce a protocol
 //     host: 'localhost',
