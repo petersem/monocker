@@ -17,7 +17,7 @@ const server = http.createServer(requestListener);
 server.listen(port, host, () => {});
 
 // main program
-let docker = new Docker({socketPath: '/var/run/docker.sock'});
+let docker = new Docker();
 // var docker = new Docker({
 //      protocol: 'http', //you can enforce a protocol
 //      host: '192.168.1.135',
