@@ -38,6 +38,8 @@ services:
       ONLY_OFFLINE_STATES: 'false'
       # Optional - regardless of any other settings, you can ignore or include 'exited'
       EXCLUDE_EXITED: 'false'      
+      # optionally set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
+      PERIOD: 10
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
