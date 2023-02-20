@@ -17,6 +17,9 @@ const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
 const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
 const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
 const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
+// Default to 10 seconds if less than 10 or blank.
+if(process.env.PERIOD != "" || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
+const PERIOD = process.env.PERIOD;
 
 let msgDetails = MESSAGE_PLATFORM.split('@');
 let isFirstRun = true;
@@ -174,14 +177,16 @@ async function run(){
     // run check
     await list();
     // restart timer
-    runClock = setInterval(run,10000);
+    runClock = setInterval(run,PERIOD);
 }
 
 console.log(`Monitoring started 
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+     - Polling period: ` + PERIOD + `
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
      - Only include labelled containers: ` + LABEL_ENABLE + ` 
      - Do not monitor 'Exited': ` + EXCLUDE_EXITED);
+
 send(`Monitoring started 
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
