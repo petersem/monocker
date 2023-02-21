@@ -182,7 +182,7 @@ async function run(){
 
 console.log(`Monitoring started 
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
-     - Polling period: ` + PERIOD + `
+     - Polling period: ` + PERIOD + ` seconds 
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
      - Only include labelled containers: ` + LABEL_ENABLE + ` 
      - Do not monitor 'Exited': ` + EXCLUDE_EXITED);
