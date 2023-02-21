@@ -149,9 +149,11 @@ async function list(){
                 newConArray.push(c.Id + "," + c.State + "," + c.Names[0] + ","  + hcStatus);
             }
         });
-        if(isFirstRun==true && DISABLE_STARTUP_MSG.toLowerCase()!='true'){
+        if(isFirstRun==true){
             console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
-            send("Currently monitoring " + newConArray.length + " (running) containers");
+            if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
+                send("Currently monitoring " + newConArray.length + " (running) containers");
+            }
             isFirstRun=false;
         }
 
