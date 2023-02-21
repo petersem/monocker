@@ -187,10 +187,10 @@ console.log(`Monitoring started
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
      - Only include labelled containers: ` + LABEL_ENABLE + ` 
      - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
-     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG);
+     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase());
 
 
-if(DISABLE_STARTUP_MSG=='true'){
+if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
     send(`Monitoring started 
         - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
         - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
