@@ -177,7 +177,7 @@ async function run(){
     // run check
     await list();
     // restart timer
-    runClock = setInterval(run,PERIOD);
+    runClock = setInterval(run,(PERIOD * 1000));
 }
 
 console.log(`Monitoring started 
