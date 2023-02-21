@@ -149,7 +149,7 @@ async function list(){
                 newConArray.push(c.Id + "," + c.State + "," + c.Names[0] + ","  + hcStatus);
             }
         });
-        if(isFirstRun==true){
+        if(isFirstRun==true && DISABLE_STARTUP_MSG.toLowerCase()!='true'){
             console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
             send("Currently monitoring " + newConArray.length + " (running) containers");
             isFirstRun=false;
@@ -189,8 +189,8 @@ console.log(`Monitoring started
      - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
      - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase());
 
-
-if(DISABLE_STARTUP_MSG.toLowerCase()!=='true'){
+console.log()
+if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
     send(`Monitoring started 
         - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
         - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
