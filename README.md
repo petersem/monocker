@@ -36,10 +36,12 @@ services:
       LABEL_ENABLE: 'false'
       # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead) - default is false
       ONLY_OFFLINE_STATES: 'false'
-      # Optional - regardless of any other settings, you can ignore or include 'exited'
+      # [Optional] - Regardless of any other settings, you can ignore or include 'exited'
       EXCLUDE_EXITED: 'false'      
-      # optionally set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
+      # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
       PERIOD: 10
+      # [Optional] - Supress startup messages from being sent. Default is false
+      DISABLE_STARTUP_MSG: 'false'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped

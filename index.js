@@ -20,7 +20,8 @@ const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
 // Default to 10 seconds if less than 10 or blank.
 if(process.env.PERIOD != "" || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
-
+const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
+      
 let msgDetails = MESSAGE_PLATFORM.split('@');
 let isFirstRun = true;
 let monContainers = [];
@@ -185,13 +186,18 @@ console.log(`Monitoring started
      - Polling period: ` + PERIOD + ` seconds 
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
      - Only include labelled containers: ` + LABEL_ENABLE + ` 
-     - Do not monitor 'Exited': ` + EXCLUDE_EXITED);
+     - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
+     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG);
 
-send(`Monitoring started 
-     - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
-     - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
-     - Only include labelled containers: ` + LABEL_ENABLE + `
-     - Do not monitor 'Exited': ` + EXCLUDE_EXITED);
+
+if(DISABLE_STARTUP_MSG=='true'){
+    send(`Monitoring started 
+        - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+        - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
+        - Only include labelled containers: ` + LABEL_ENABLE + `
+        - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
+        - Disable Startup Messages: ` + DISABLE_STARTUP_MSG);
+}
 
 // start processing
 run();
