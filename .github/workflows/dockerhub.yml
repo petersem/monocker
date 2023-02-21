@@ -22,7 +22,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: petersem/monocker
           tags: latest
-          platforms: linux/amd64,linux/arm64
           push: true
       - name: Run a one-line script
         run: echo Hello, world!
