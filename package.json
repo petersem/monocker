@@ -33,6 +33,6 @@
     "node-pushover": "^1.0.0",
     "nodemon": "^2.0.9",
     "pushbullet": "^2.0.0",
-    "telegram-notify": "^1.3.2"
+    "telegram-notify": "^1.3.3"
   }
 }
