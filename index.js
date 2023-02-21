@@ -190,7 +190,7 @@ console.log(`Monitoring started
      - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase());
 
 
-if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
+if(DISABLE_STARTUP_MSG.toLowerCase()!=='true'){
     send(`Monitoring started 
         - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
         - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
