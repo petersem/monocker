@@ -60,6 +60,13 @@ services:
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 - For Discord: See Discord doco for how to create a webhook and get the url
+- For Ntfy: create a new topic on https://ntfy.sh/app, use the name of the topic as follows: ntfy@MY_TOPIC_TITLE
+  
+  If you would like to use your own ntfy server you can add the environment variable `CUSTOM_NTFY_SERVER`
+  
+  If you would like to use a username and password (either on ntfy.sh or on your own server, uncomment the variables `NTFY_USER` and `NTFY_PASS`
+  
+  (it would be advised to store these in an environment file and not directly use them in your docker-compose.yml)
 
 #### LABEL_ENABLE
 This is an optional value, and defaults to false if it is not specified. This feature allows you to specify (with labels) 'either' specific containers to monitor or exclude from monitoring. 
