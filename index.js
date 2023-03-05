@@ -126,7 +126,6 @@ async function send(message) {
             sendDiscord(title, message);
             break;
         case "ntfy":
-            sendSlack(title,message); //TEMP
             if(NTFY_PASS.length == 0) sendNtfy(title,message); else sendNtfyAuth(title,message);
             break;
         case "slack":
