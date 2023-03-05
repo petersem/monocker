@@ -36,6 +36,7 @@ services:
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: 'discord@webhook_url'
       # MESSAGE_PLATFORM: 'ntfy@topic_title'
+      # MESSAGE_PLATFORM: 'slack@bot_user_oauth_token@your_chat_id'
       # MESSAGE_PLATFORM: ''
       # Optional - includes or excludes specified containers - default behaviour is false
       LABEL_ENABLE: 'false'
@@ -60,6 +61,7 @@ services:
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 - For Discord: See Discord doco for how to create a webhook and get the url
+- For Slack: See [documentation](doco/slack.md) for how to obtain ID values.
 - For Ntfy: create a new topic on https://ntfy.sh/app, use the name of the topic as follows: ntfy@MY_TOPIC_TITLE
   
   If you would like to use your own ntfy server you can add the environment variable `CUSTOM_NTFY_SERVER`

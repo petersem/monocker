@@ -5,6 +5,7 @@ const PushBullet = require('pushbullet');
 const Pushover = require('node-pushover');
 const { Webhook } = require('discord-webhook-node');
 const { NtfyClient } = require('ntfy');
+const { WebClient } = require('@slack/web-api');
 
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
@@ -97,6 +98,16 @@ async function sendNtfy(title, message){
     });
 }
 
+async function sendSlack(title, message){
+    const web = new WebClient(msgDetails[1]);
+    await web.chat.postMessage({ 
+        channel: msgDetails[2],
+        username: title,
+        text: message,
+        icon_url: SERVER_AVATAR,
+    });
+}
+
 async function send(message) {
     let title = "MONOCKER";
     if(SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")"
@@ -115,8 +126,12 @@ async function send(message) {
             sendDiscord(title, message);
             break;
         case "ntfy":
-                if(NTFY_PASS.length == 0) sendNtfy(title,message); else sendNtfyAuth(title,message);
-                break;
+            sendSlack(title,message); //TEMP
+            if(NTFY_PASS.length == 0) sendNtfy(title,message); else sendNtfyAuth(title,message);
+            break;
+        case "slack":
+            sendSlack(title, message);
+            break;
         case "default":
             // do nothing
             break;
