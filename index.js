@@ -1,43 +1,41 @@
-const Telegram = require('telegram-notify');
-const Docker = require('dockerode');
+const Telegram = require("telegram-notify");
+const Docker = require("dockerode");
 const pjson = require("./package.json");
-const PushBullet = require('pushbullet');
-const Pushover = require('node-pushover');
-const { Webhook } = require('discord-webhook-node');
-const { NtfyClient } = require('ntfy');
-const { WebClient } = require('@slack/web-api');
+const PushBullet = require("pushbullet");
+const Pushover = require("node-pushover");
+const { Webhook } = require("discord-webhook-node");
+const { NtfyClient } = require("ntfy");
+const { WebClient } = require("@slack/web-api");
 
-let docker = new Docker({ socketPath: '/var/run/docker.sock' });
+let docker = new Docker({ socketPath: "/var/run/docker.sock" });
 // var docker = new Docker({
 //     protocol: 'http', //you can enforce a protocol
 //     host: 'localhost',
 //     port: 2375 //process.env.DOCKER_PORT || 2375
 // });
+
 const NODE_ENV = process.env.NODE_ENV || "production";
 const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const SERVER_AVATAR = process.env.SERVER_AVATAR || "";
 const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
-const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
-const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
-const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
+const LABEL_ENABLE = process.env.LABEL_ENABLE || "false";
+const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || "false";
+const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || "false";
 // Default to 10 seconds if less than 10 or blank.
-if (process.env.PERIOD != "" || process.env.PERIOD < 10) { process.env.PERIOD = 10; }
+if (process.env.PERIOD != "" || process.env.PERIOD < 10) {
+    process.env.PERIOD = 10;
+}
 const PERIOD = process.env.PERIOD;
-const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
+const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || "false";
 // NTFY settings
 const CUSTOM_NTFY_SERVER = process.env.CUSTOM_NTFY_SERVER || null;
 const NTFY_USER = process.env.NTFY_USER || "";
 const NTFY_PASS = process.env.NTFY_PASS || "";
 
-let msgDetails = MESSAGE_PLATFORM.split('@');
+let msgDetails = MESSAGE_PLATFORM.split("@");
 let isFirstRun = true;
 let monContainers = [];
-let offlineStates = [
-    'exited',
-    'dead',
-    'running (unhealthy)',
-    'paused'
-];
+let offlineStates = ["exited", "dead", "running (unhealthy)", "paused"];
 let runClock;
 
 console.log("-------------------------------------------------------");
@@ -48,15 +46,15 @@ console.log(" Version: " + pjson.version);
 console.log("-------------------------------------------------------");
 console.log(" ");
 
-async function sendTelegram(message){
-    let notify = new Telegram({token:msgDetails[1], chatId:msgDetails[2]});
-    await notify.send(message, {timeout: 10000}, {parse_mode: 'html'});
+async function sendTelegram(message) {
+    let notify = new Telegram({ token: msgDetails[1], chatId: msgDetails[2] });
+    await notify.send(message, { timeout: 10000 }, { parse_mode: "html" });
 }
 
 async function sendPushbullet(title, message) {
     var pusher = new PushBullet(msgDetails[1]);
-    pusher.note(msgDetails[2], title, message, function (err, res) { 
-        if(err) return console.log(err.message);
+    pusher.note(msgDetails[2], title, message, function (err, res) {
+        if (err) return console.log(err.message);
         console.error(res.message);
     });
 }
@@ -64,10 +62,10 @@ async function sendPushbullet(title, message) {
 async function sendPushover(title, message) {
     var push = new Pushover({
         token: msgDetails[2],
-        user: msgDetails[1]
+        user: msgDetails[1],
     });
     push.send(title, message, function (err, res) {
-        if(err) return console.log(err);
+        if (err) return console.log(err);
         console.error(res);
     });
 }
@@ -133,7 +131,7 @@ async function sendSlack(title, message) {
 
 async function send(message) {
     let title = "MONOCKER";
-    if (SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")"
+    if (SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")";
 
     switch (msgDetails[0].toLowerCase()) {
         case "telegram":
@@ -149,7 +147,8 @@ async function send(message) {
             sendDiscord(title, message);
             break;
         case "ntfy":
-            if (NTFY_PASS.length == 0) sendNtfy(title, message); else sendNtfyAuth(title, message);
+            if (NTFY_PASS.length == 0) sendNtfy(title, message);
+            else sendNtfyAuth(title, message);
             break;
         case "slack":
             sendSlack(title, message);
@@ -163,86 +162,139 @@ async function send(message) {
 async function list() {
     let opts;
 
-    if (LABEL_ENABLE == 'true') {
+    if (LABEL_ENABLE == "true") {
         opts = {
-            "filters": '{"label": ["monocker.enable=true"]}'
+            filters: '{"label": ["monocker.enable=true"]}',
         };
-    }
-    else {
+    } else {
         opts = { all: true };
     }
 
     //let now = new Date();
     //console.log(now.toLocaleString() + " - Container scan");
-    docker.listContainers(opts, function (err, containers) {
-        // check for changes in status (first run is populating data only)
-        let newConArray = [];
-        containers.forEach(c => {
-            // if label_enable is false then exclude any specifically false labelled containers
-            if (LABEL_ENABLE == 'false' && JSON.stringify(c.Labels).includes('"monocker.enable":"false"')) {
-                if (isFirstRun == true) {
-                    console.log('    - Excluding: ' + c.Names[0].replace("/", ""));
-                    send('Excluding: ' + c.Names[0].replace("/", ""));
-                }
-            }
-            else {
-                // If label_enable is true, list the specifically included containers
-                if (LABEL_ENABLE == 'true' && JSON.stringify(c.Labels).includes('"monocker.enable":"true"')) {
+    docker.listContainers(
+        opts,
+        function (err, containers) {
+            // check for changes in status (first run is populating data only)
+            let newConArray = [];
+            containers.forEach((c) => {
+                // if label_enable is false then exclude any specifically false labelled containers
+                if (
+                    LABEL_ENABLE == "false" &&
+                    JSON.stringify(c.Labels).includes('"monocker.enable":"false"')
+                ) {
                     if (isFirstRun == true) {
-                        console.log('    - Monitoring: ' + c.Names[0].replace("/", ""));
-                        send('Monitoring: ' + c.Names[0].replace("/", ""));
+                        console.log("    - Excluding: " + c.Names[0].replace("/", ""));
+                        send("Excluding: " + c.Names[0].replace("/", ""));
                     }
-                }
-                // determine if covered by healthcheck
-                let hcStatus = "";
-                if (c.Status.includes("(healthy)")) hcStatus = "(healthy)"
-                if (c.Status.includes("(unhealthy)")) hcStatus = "(unhealthy)"
-                if (monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0) {
-                    // exclude exited status if set
-                    if (EXCLUDE_EXITED == 'true' && c.State.toLocaleLowerCase() == 'exited') {
-                        // ignore 
+                } else {
+                    // If label_enable is true, list the specifically included containers
+                    if (
+                        LABEL_ENABLE == "true" &&
+                        JSON.stringify(c.Labels).includes('"monocker.enable":"true"')
+                    ) {
+                        if (isFirstRun == true) {
+                            console.log("    - Monitoring: " + c.Names[0].replace("/", ""));
+                            send("Monitoring: " + c.Names[0].replace("/", ""));
+                        }
                     }
-                    else {
-                        // if only offline is set, then only show state changes that are offline
-                        if (ONLY_OFFLINE_STATES == 'true') {
-                            if (offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)) {
-                                console.log("    - " + c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus);
-                                send(c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus);
+                    // determine if covered by healthcheck
+                    let hcStatus = "";
+                    if (c.Status.includes("(healthy)")) hcStatus = "(healthy)";
+                    if (c.Status.includes("(unhealthy)")) hcStatus = "(unhealthy)";
+                    if (
+                        monContainers.includes(
+                            c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus
+                        ) == false &&
+                        monContainers.length !== 0
+                    ) {
+                        // exclude exited status if set
+                        if (
+                            EXCLUDE_EXITED == "true" &&
+                            c.State.toLocaleLowerCase() == "exited"
+                        ) {
+                            // ignore
+                        } else {
+                            // if only offline is set, then only show state changes that are offline
+                            if (ONLY_OFFLINE_STATES == "true") {
+                                if (
+                                    offlineStates.includes(c.State) ||
+                                    offlineStates.includes(c.State + " " + hcStatus)
+                                ) {
+                                    console.log(
+                                        "    - " +
+                                        c.Names[0].replace("/", "") +
+                                        ": " +
+                                        c.State +
+                                        " " +
+                                        hcStatus
+                                    );
+                                    send(
+                                        c.Names[0].replace("/", "") +
+                                        ": " +
+                                        c.State +
+                                        " " +
+                                        hcStatus
+                                    );
+                                }
+                            } else {
+                                console.log(
+                                    "    - " +
+                                    c.Names[0].replace("/", "") +
+                                    ": " +
+                                    c.State +
+                                    " " +
+                                    hcStatus
+                                );
+                                send(
+                                    c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus
+                                );
                             }
                         }
-                        else {
-                            console.log("    - " + c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus);
-                            send(c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus);
-                        }
                     }
-                }
-                // create new container array
-                newConArray.push(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus);
-            }
-        });
-        if (isFirstRun == true) {
-            console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
-            if (DISABLE_STARTUP_MSG.toLowerCase() != 'true') {
-                send("Currently monitoring " + newConArray.length + " (running) containers");
-            }
-            isFirstRun = false;
-        }
-
-        // check if any containers have been deleted between scans
-        if (monContainers.length !== 0) {
-            monContainers.forEach(c => {
-                let delArray = newConArray.filter(nc => nc.includes(c.split(",")[0]));
-                // if no match in history array and latest scan, then is deleted
-                if (delArray.length == 0 && EXCLUDE_EXITED !== 'true') {
-                    console.log("    - " + c.split(",")[2].replace("/", "") + ": exited");
-                    send(c.split(",")[2].replace("/", "") + ": exited")
+                    // create new container array
+                    newConArray.push(
+                        c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus
+                    );
                 }
             });
-        }
+            if (isFirstRun == true) {
+                console.log(
+                    "     - Currently monitoring " +
+                    newConArray.length +
+                    " (running) containers"
+                );
+                if (DISABLE_STARTUP_MSG.toLowerCase() != "true") {
+                    send(
+                        "Currently monitoring " +
+                        newConArray.length +
+                        " (running) containers"
+                    );
+                }
+                isFirstRun = false;
+            }
 
-        // assign new array to be current array state
-        monContainers = newConArray;
-    }, Promise.resolve(0));
+            // check if any containers have been deleted between scans
+            if (monContainers.length !== 0) {
+                monContainers.forEach((c) => {
+                    let delArray = newConArray.filter((nc) =>
+                        nc.includes(c.split(",")[0])
+                    );
+                    // if no match in history array and latest scan, then is deleted
+                    if (delArray.length == 0 && EXCLUDE_EXITED !== "true") {
+                        console.log(
+                            "    - " + c.split(",")[2].replace("/", "") + ": exited"
+                        );
+                        send(c.split(",")[2].replace("/", "") + ": exited");
+                    }
+                });
+            }
+
+            // assign new array to be current array state
+            monContainers = newConArray;
+        },
+        Promise.resolve(0)
+    );
 }
 
 async function run() {
@@ -251,25 +303,49 @@ async function run() {
     // run check
     await list();
     // restart timer
-    runClock = setInterval(run, (PERIOD * 1000));
+    runClock = setInterval(run, PERIOD * 1000);
 }
 
-console.log(`Monitoring started 
-     - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
-     - Polling period: ` + PERIOD + ` seconds 
-     - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
-     - Only include labelled containers: ` + LABEL_ENABLE + ` 
-     - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
-     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase());
+console.log(
+    `Monitoring started 
+     - Messaging platform: ` +
+    MESSAGE_PLATFORM.split("@")[0] +
+    `
+     - Polling period: ` +
+    PERIOD +
+    ` seconds 
+     - Only offline state monitoring: ` +
+    ONLY_OFFLINE_STATES +
+    `
+     - Only include labelled containers: ` +
+    LABEL_ENABLE +
+    ` 
+     - Do not monitor 'Exited': ` +
+    EXCLUDE_EXITED +
+    `
+     - Disable Startup Messages: ` +
+    DISABLE_STARTUP_MSG.toLowerCase()
+);
 
-console.log()
-if (DISABLE_STARTUP_MSG.toLowerCase() != 'true') {
-    send(`Monitoring started 
-        - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
-        - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
-        - Only include labelled containers: ` + LABEL_ENABLE + `
-        - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
-        - Disable Startup Messages: ` + DISABLE_STARTUP_MSG);
+console.log();
+if (DISABLE_STARTUP_MSG.toLowerCase() != "true") {
+    send(
+        `Monitoring started 
+        - Messaging platform: ` +
+        MESSAGE_PLATFORM.split("@")[0] +
+        `
+        - Only offline state monitoring: ` +
+        ONLY_OFFLINE_STATES +
+        `
+        - Only include labelled containers: ` +
+        LABEL_ENABLE +
+        `
+        - Do not monitor 'Exited': ` +
+        EXCLUDE_EXITED +
+        `
+        - Disable Startup Messages: ` +
+        DISABLE_STARTUP_MSG
+    );
 }
 
 // start processing
