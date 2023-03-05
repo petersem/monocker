@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/petersem/monocker#readme",
   "dependencies": {
-    "@slack/socket-mode": "^1.3.2",
     "@slack/web-api": "^6.8.1",
     "discord-webhook-node": "^1.1.8",
     "dockerode": "^3.3.0",
