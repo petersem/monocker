@@ -8,6 +8,7 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change
 - Pushbullet integration
 - Pushover integration
 - Discord integration (via webhooks)
+- Ntfy integration
 - Monitors 'state' changes for all containers (every 10 seconds)
 - Specific inclusions or exclusions of containers to monitor
 - Optionally, only alert on state changes to (paused, exited, running (unhealthy), or dead)
@@ -26,11 +27,15 @@ services:
     environment:
       # Optional label to preface messages. Handy if you are running multiple versions of Monocker
       SERVER_LABEL: 'Dev'
+      # Optional avatar image to add to messages. Handy if you are running Monocker on different machines
+      # - ONLY supported by discord & ntfy (mobile app)
+      SERVER_AVATAR: 'https://www.docker.com/wp-content/uploads/2021/10/Moby-logo-sm.png'
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: 'discord@webhook_url'
+      # MESSAGE_PLATFORM: 'ntfy@topic_title'
       # MESSAGE_PLATFORM: ''
       # Optional - includes or excludes specified containers - default behaviour is false
       LABEL_ENABLE: 'false'
@@ -42,6 +47,11 @@ services:
       PERIOD: 10
       # [Optional] - Supress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
+
+      ## ADVANCED NTFY SETTINGS
+      #CUSTOM_NTFY_SERVER: 'https://custom.ntfy.com' # use your own NTFY server
+      #NTFY_USER: 'user' # use a username and password to login (on ntfy.sh or your own server)
+      #NTFY_PASS: 'password' 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped

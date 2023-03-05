@@ -4,7 +4,7 @@ const pjson = require("./package.json");
 const PushBullet = require('pushbullet');
 const Pushover = require('node-pushover');
 const { Webhook } = require('discord-webhook-node');
-
+const { NtfyClient } = require('ntfy');
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
 //     protocol: 'http', //you can enforce a protocol
@@ -22,6 +22,11 @@ const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
 if(process.env.PERIOD != "" || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
 const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
+// NTFY settings
+const CUSTOM_NTFY_SERVER = process.env.CUSTOM_NTFY_SERVER || null;
+const NTFY_TOPIC = process.env.NTFY_TOPIC || "";
+const NTFY_USER = process.env.NTFY_USER || "";
+const NTFY_PASS = process.env.NTFY_PASS || "";
       
 let msgDetails = MESSAGE_PLATFORM.split('@');
 let isFirstRun = true;
@@ -66,6 +71,31 @@ async function sendDiscord(title, message){
     hook.send(message);
 }
 
+async function sendNtfyAuth(title, message){
+    const ntfy = new NtfyClient();
+    await ntfy.publish({
+        authorization: {
+            password: NTFY_PASS,
+            username: NTFY_USER,
+          },
+        server: CUSTOM_NTFY_SERVER,
+        topic: msgDetails[1],
+        title: title,
+        message: message,
+        iconURL: SERVER_AVATAR,
+    });
+}
+
+async function sendNtfy(title, message){
+    const ntfy = new NtfyClient();
+    await ntfy.publish({
+        server: CUSTOM_NTFY_SERVER,
+        topic: msgDetails[1],
+        title: title,
+        message: message,
+        iconURL: SERVER_AVATAR,
+    });
+}
 
 async function send(message) {
     let title = "MONOCKER";
@@ -73,8 +103,7 @@ async function send(message) {
 
     switch(msgDetails[0].toLowerCase()) {
         case "telegram":
-            sendTelegram(`<b>` + title + `</b>
-` + message);
+            sendTelegram(`<b>` + title + `</b>` + message);
             break;
         case "pushbullet":
             sendPushbullet(title, message);
@@ -85,6 +114,9 @@ async function send(message) {
         case "discord":
             sendDiscord(title, message);
             break;
+        case "ntfy":
+                if(NTFY_PASS.length == 0) sendNtfy(title,message); else sendNtfyAuth(title,message);
+                break;
         case "default":
             // do nothing
             break;

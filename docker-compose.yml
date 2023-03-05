@@ -8,30 +8,33 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      # Optional label to preface messages. Handy if you are running Monocker on different machines
+      # Optional label to preface messages. Handy if you are running multiple versions of Monocker
       SERVER_LABEL: 'Dev'
       # Optional avatar image to add to messages. Handy if you are running Monocker on different machines
-      # - ONLY supported by discord
+      # -> ONLY supported by discord & ntfy (mobile app)
       SERVER_AVATAR: 'https://www.docker.com/wp-content/uploads/2021/10/Moby-logo-sm.png'
-      # Optional - regardless of any other settings, you can ignore or include 'exited'
-      EXCLUDE_EXITED: 'false'
-      # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead)
-      ONLY_OFFLINE_STATES: 'true'
-      # [Optional] -  set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
-      PERIOD: 10
-      # [Optional] - Supress startup messages from being sent. Default is false
-      DISABLE_STARTUP_MSG: 'false'
-      # Specify the messaging platform and details, or omit this if only wanting container logs
+      # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: 'discord@webhook_url'
-
-      # Filtering monitored containers - Optional - see readme
-      # If missing or set to false (default), any containers with a "monocker.enable: 'false'" label will be excluded, and all others monitored.
-      # If set to true, only containers with a "monocker.enable: 'true'" label will be included.
+      # MESSAGE_PLATFORM: 'ntfy@topic_title'
+      # MESSAGE_PLATFORM: ''
+      # Optional - includes or excludes specified containers - default behaviour is false
       LABEL_ENABLE: 'false'
+      # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead) - default is false
+      ONLY_OFFLINE_STATES: 'false'
+      # [Optional] - Regardless of any other settings, you can ignore or include 'exited'
+      EXCLUDE_EXITED: 'false'      
+      # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
+      PERIOD: 10
+      # [Optional] - Supress startup messages from being sent. Default is false
+      DISABLE_STARTUP_MSG: 'false'
 
+      ## ADVANCED NTFY SETTINGS
+      #CUSTOM_NTFY_SERVER: 'https://custom.ntfy.com' # use your own NTFY server
+      #NTFY_USER: 'user' # use a username and password to login (on ntfy.sh or your own server)
+      #NTFY_PASS: 'password' 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
