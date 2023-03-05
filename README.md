@@ -28,7 +28,7 @@ services:
       # Optional label to preface messages. Handy if you are running multiple versions of Monocker
       SERVER_LABEL: 'Dev'
       # Optional avatar image to add to messages. Handy if you are running Monocker on different machines
-      # - ONLY supported by discord & ntfy (mobile app)
+      # - supported by discord & ntfy (mobile app) & slack
       SERVER_AVATAR: 'https://www.docker.com/wp-content/uploads/2021/10/Moby-logo-sm.png'
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
