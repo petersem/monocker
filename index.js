@@ -13,6 +13,7 @@ let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // });
 const NODE_ENV = process.env.NODE_ENV || "production";
 const SERVER_LABEL = process.env.SERVER_LABEL || "";
+const SERVER_AVATAR = process.env.SERVER_AVATAR || "";
 const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
 const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
 const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
@@ -61,6 +62,7 @@ async function sendPushover(title, message){
 async function sendDiscord(title, message){
     const hook = new Webhook(msgDetails[1]);
     hook.setUsername(title);
+    hook.setAvatar(SERVER_AVATAR);
     hook.send(message);
 }
 

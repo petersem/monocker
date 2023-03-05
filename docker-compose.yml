@@ -10,6 +10,9 @@ services:
     environment:
       # Optional label to preface messages. Handy if you are running Monocker on different machines
       SERVER_LABEL: 'Dev'
+      # Optional avatar image to add to messages. Handy if you are running Monocker on different machines
+      # - ONLY supported by discord
+      SERVER_AVATAR: 'https://www.docker.com/wp-content/uploads/2021/10/Moby-logo-sm.png'
       # Optional - regardless of any other settings, you can ignore or include 'exited'
       EXCLUDE_EXITED: 'false'
       # Optional - only show when container state changes to being offline (paused, exited, running (unhealthy), or dead)
