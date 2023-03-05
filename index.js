@@ -5,6 +5,7 @@ const PushBullet = require('pushbullet');
 const Pushover = require('node-pushover');
 const { Webhook } = require('discord-webhook-node');
 const { NtfyClient } = require('ntfy');
+
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
 //     protocol: 'http', //you can enforce a protocol
@@ -24,7 +25,6 @@ const PERIOD = process.env.PERIOD;
 const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
 // NTFY settings
 const CUSTOM_NTFY_SERVER = process.env.CUSTOM_NTFY_SERVER || null;
-const NTFY_TOPIC = process.env.NTFY_TOPIC || "";
 const NTFY_USER = process.env.NTFY_USER || "";
 const NTFY_PASS = process.env.NTFY_PASS || "";
       
