@@ -64,7 +64,7 @@ services:
   
   If you would like to use your own ntfy server you can add the environment variable `CUSTOM_NTFY_SERVER`
   
-  If you would like to use a username and password (either on ntfy.sh or on your own server, uncomment the variables `NTFY_USER` and `NTFY_PASS`
+  If you would like to use a username and password (either on ntfy.sh or on your own server), uncomment the variables `NTFY_USER` and `NTFY_PASS`
   
   (it would be advised to store these in an environment file and not directly use them in your docker-compose.yml)
 
