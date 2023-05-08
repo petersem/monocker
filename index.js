@@ -1,3 +1,4 @@
+const https = require('https');
 const Telegram = require('telegram-notify');
 const Docker = require('dockerode');
 const pjson = require("./package.json");
@@ -40,6 +41,22 @@ console.log(" ");
 console.log(" Version: " + pjson.version);
 console.log("-------------------------------------------------------");
 console.log(" ");
+
+async function sendWhatsapp(title, message){
+    let msg = `*${title}*: ${message}`;
+    https.get(`https://api.callmebot.com/whatsapp.php?source=php&phone=${msgDetails[1]}&text=${encodeURIComponent(msg)}&apikey=${msgDetails[2]}`, res => {
+        let data = [];
+        res.on('data', chunk => {
+            data.push(chunk);
+        });
+        res.on('end', () => {
+            console.log(`Response from callmebot.com: ${Buffer.concat(data).toString()}`);            
+        });
+    }).on('error', err => {
+        console.log('Error while calling callmebot.com: ', err.message);
+    });
+}
+
 async function sendTelegram(message){
     let notify = new Telegram({token:msgDetails[1], chatId:msgDetails[2]});
     await notify.send(message, {timeout: 10000}, {parse_mode: 'html'});
@@ -83,6 +100,8 @@ async function send(message) {
         case "discord":
             sendDiscord(title, message);
             break;
+        case "whatsapp":
+            sendWhatsapp(title, message)
         case "default":
             // do nothing
             break;
