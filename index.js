@@ -57,6 +57,37 @@ async function sendWhatsapp(title, message){
     });
 }
 
+async function sendNtfySh(title, message){
+    let ntfyServer = msgDetails[1]
+    let ntfyTopic = msgDetails[2]
+    let headerData = {
+    	...{
+        	'Content-Type': 'text/plain',
+        	'Title': title,
+        	'Tags': 'whale2,server,docker',
+        	'Priority': ((message.includes("dead") || message.includes("unhealthy")) ? 4 : 3)
+    	},
+      	...((msgDetails.length == 4 && msgDetails[3].length > 0) && { "Authorization": `Bearer ${msgDetails[3]}`})
+    }
+    let req = https.request(`${ntfyServer}/${ntfyTopic}`, {
+        method: 'POST',
+        headers: headerData
+    }, res => {
+        let data = [];
+        res.on('data', chunk => {
+            data.push(chunk);
+        });
+        res.on('end', () => {
+            console.log(`Response from ${ntfyServer}:: ${Buffer.concat(data).toString()}`);            
+        });
+    })    
+    req.on('error', err => {
+        console.log(`Error while calling ${ntfyServer}: `, err.message);
+    });
+    req.write(message);
+    req.end();
+}
+
 async function sendTelegram(message){
     let notify = new Telegram({token:msgDetails[1], chatId:msgDetails[2]});
     await notify.send(message, {timeout: 10000}, {parse_mode: 'html'});
@@ -102,6 +133,8 @@ async function send(message) {
             break;
         case "whatsapp":
             sendWhatsapp(title, message)
+        case "ntfy.sh":
+            sendNtfySh(title, message)
         case "default":
             // do nothing
             break;
