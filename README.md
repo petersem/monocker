@@ -46,7 +46,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 ```
-- For Telegram: See documentation for how to obtain ID values. 
+- For Telegram: See documentation for how to obtain ID values
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 - For Discord: See Discord doco for how to create a webhook and get the url
