@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 const HttpsProxyAgent = require('https-proxy-agent');
+const {sleep} = require('usleep');
+const MAX_ERRORS = 5;
 
 class TelegramNotify {
 
@@ -7,6 +9,7 @@ class TelegramNotify {
     this.token = config.token;
     this.chatId = config.chatId;
     this.proxy = config.proxy;
+    this.maxErrors = config.maxErrors || MAX_ERRORS;
   }
 
   async send(message, fetchOptions = {}, apiOptions = {}) {
@@ -21,12 +24,20 @@ class TelegramNotify {
     for (let param in apiOptions) {
       url += '&' + param + '=' + apiOptions[param];
     }
+
+    return await this.#apiRequest(url, fetchOptions);
+  }
+
+  async #apiRequest(url, fetchOptions, attempt = 1) {
     try {
-      let response = await (await fetch(url, fetchOptions)).json();
-      return response;
+      return await (await fetch(url, fetchOptions)).json();
     } catch (e) {
-      console.error(new Date().toLocaleString(), e.message);
-      return false;
+      console.error(new Date().toLocaleString(), 'attempt ' + attempt, e.message);
+      if (attempt >= this.maxErrors) {
+        return false;
+      }
+      await sleep(5);
+      return await this.#apiRequest(url, fetchOptions, ++attempt);
     }
   }
 }
