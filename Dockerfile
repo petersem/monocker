@@ -1,10 +1,12 @@
-FROM node:18-alpine3.17
-ENV NODE_ENV=production
+FROM node:18-alpine3.18 as builder
 WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent 
-RUN mv node_modules ../
-COPY . .
+COPY ["package.json", "package-lock.json*", "index.js", "./"]
+RUN npm install --omit=dev
+
+FROM alpine:3.18 as deploy
+RUN apk add --no-cache nodejs
+COPY --from=builder /usr/src/app /app
+WORKDIR /app
 EXPOSE 3000
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=5s CMD wget --spider http://localhost:8000 > /dev/null || exit 1
-CMD ["npm", "start"]
+CMD ["node", "index.js"]
