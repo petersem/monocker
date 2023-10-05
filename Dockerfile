@@ -6,4 +6,5 @@ RUN npm install --production --silent
 RUN mv node_modules ../
 COPY . .
 EXPOSE 3000
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=5s CMD wget --spider http://localhost:8000 > /dev/null || exit 1
 CMD ["npm", "start"]

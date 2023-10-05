@@ -5,6 +5,18 @@ const PushBullet = require('pushbullet');
 const Pushover = require('node-pushover');
 const { Webhook } = require('discord-webhook-node');
 
+// for health check
+const http = require("http");
+const host = 'localhost';
+const port = 8000;
+const requestListener = function (req, res) {
+    res.writeHead(200);
+    res.end("Monocker is functional!");
+};
+const server = http.createServer(requestListener);
+server.listen(port, host, () => {});
+
+// main program
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
 //     protocol: 'http', //you can enforce a protocol
@@ -63,7 +75,6 @@ async function sendDiscord(title, message){
     hook.setUsername(title);
     hook.send(message);
 }
-
 
 async function send(message) {
     let title = "MONOCKER";
