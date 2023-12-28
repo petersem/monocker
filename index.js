@@ -19,10 +19,10 @@ server.listen(port, host, () => {});
 // main program
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
-//     protocol: 'http', //you can enforce a protocol
-//     host: 'localhost',
-//     port: 2375 //process.env.DOCKER_PORT || 2375
-// });
+//      protocol: 'http', //you can enforce a protocol
+//      host: '192.168.1.135',
+//      port: 2375 //process.env.DOCKER_PORT || 2375
+//  });
 const NODE_ENV = process.env.NODE_ENV || "production";
 const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
@@ -146,13 +146,13 @@ async function list(){
                         // if only offline is set, then only show state changes that are offline
                         if(ONLY_OFFLINE_STATES=='true'){
                             if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
-                                console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
-                                send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus);
+                                console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus + " " + c.ImageID);
+                                send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus + " " + c.ImageID);
                             }
                         }
                         else{
-                            console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus);
-                            send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus);
+                            console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus + " " + c.ImageID);
+                            send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus + " " + c.ImageID);
                         }
                     }
                 }
