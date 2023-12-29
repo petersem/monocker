@@ -43,6 +43,8 @@ services:
       PERIOD: 10
       # [Optional] - Supress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
+      # [optional] - adds SHA ID for all container references. 'true' or 'false' (default)
+      SHA: 'false'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped

@@ -29,6 +29,7 @@ const MESSAGE_PLATFORM = process.env.MESSAGE_PLATFORM || "";
 const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
 const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
 const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
+const SHA = process.env.SHA || 'false';
 // Default to 10 seconds if less than 10 or blank.
 if(process.env.PERIOD != "" || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
@@ -146,13 +147,17 @@ async function list(){
                         // if only offline is set, then only show state changes that are offline
                         if(ONLY_OFFLINE_STATES=='true'){
                             if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
-                                console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus + " " + c.ImageID);
-                                send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus + " " + c.ImageID);
+                                var output = c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus;
+                                if(SHA.toLowerCase()=='true'){
+                                    output += " " + c.ImageID
+                                }
+                                console.log("    - " + output);
+                                send(output);
                             }
                         }
                         else{
-                            console.log("    - " +c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus + " " + c.ImageID);
-                            send(c.Names[0].replace("/","") +": "+c.State + " " + hcStatus + " " + c.ImageID);
+                            console.log("    - " + output);
+                            send(output);
                         }
                     }
                 }
@@ -174,8 +179,12 @@ async function list(){
                 let delArray = newConArray.filter(nc => nc.includes(c.split(",")[0]));
                 // if no match in history array and latest scan, then is deleted
                 if(delArray.length==0 && EXCLUDE_EXITED !== 'true'){
-                    console.log("    - " + c.split(",")[2].replace("/","") + ": exited");
-                    send(c.split(",")[2].replace("/","") +": exited")
+                    var output = c.split(",")[2].replace("/","") + ": exited"
+                    if(SHA.toLowerCase()=='true'){
+                        output += " " + c.ImageID
+                    }
+                    console.log("    - " + output);
+                    send(output)
                 }
             });
         }
@@ -200,7 +209,8 @@ console.log(`Monitoring started
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
      - Only include labelled containers: ` + LABEL_ENABLE + ` 
      - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
-     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase());
+     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase() + `
+     - Display SHA ID: ` + SHA);
 
 console.log()
 if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
@@ -209,7 +219,8 @@ if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
         - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
         - Only include labelled containers: ` + LABEL_ENABLE + `
         - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
-        - Disable Startup Messages: ` + DISABLE_STARTUP_MSG);
+        - Disable Startup Messages: ` + DISABLE_STARTUP_MSG + `
+        - Display SHA ID: ` + SHA);
 }
 
 // start processing
