@@ -145,12 +145,12 @@ async function list(){
                     }
                     else{
                         // if only offline is set, then only show state changes that are offline
+                        var output = c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus;
+                        if(SHA.toLowerCase()=='true'){
+                            output += " " + c.ImageID
+                        }
                         if(ONLY_OFFLINE_STATES=='true'){
                             if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
-                                var output = c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus;
-                                if(SHA.toLowerCase()=='true'){
-                                    output += " " + c.ImageID
-                                }
                                 console.log("    - " + output);
                                 send(output);
                             }
