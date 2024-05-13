@@ -30,8 +30,8 @@ const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
 const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
 const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
 const SHA = process.env.SHA || 'false';
-// Default to 10 seconds if less than 10 or blank.
-if(process.env.PERIOD != "" || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
+// Default to 10 seconds if less than 10, blank or undefined.
+if(process.env.PERIOD == "" || process.env.PERIOD === undefined || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
 const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
       
