@@ -25,6 +25,8 @@ services:
     container_name: monocker
     image: petersem/monocker
     environment:
+      # Optional - set this to use a docker interface other than the default
+      DOCKER_HOST: tcp://docker-socket-proxy:2375
       # Optional label to preface messages. Handy if you are running multiple versions of Monocker
       SERVER_LABEL: 'Dev'
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
@@ -53,6 +55,11 @@ services:
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 - For Discord: See Discord doco for how to create a webhook and get the url
+
+#### DOCKER_HOST
+This is an optional value, and if set will change the interface used to communicate with Docker. This can be a UNIX socket (`unix://`), Windows named pipe (`npipe://`) or TCP connection (`tcp://`). If it's a pipe or socket, be sure to mount the connection as a volume. If the connection is proxied, ensure that `GET` requests are allowed on the `/containers` endpoint.
+
+By default, this value is unset and the connection will use `/var/run/docker.sock`.
 
 #### LABEL_ENABLE
 This is an optional value, and defaults to false if it is not specified. This feature allows you to specify (with labels) 'either' specific containers to monitor or exclude from monitoring. 
