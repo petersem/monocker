@@ -118,7 +118,7 @@ async function list(){
     docker.listContainers(opts, function(err, containers) {
         // check for changes in status (first run is populating data only)
         let newConArray = [];
-        if (containers > 0) {
+        if (containers.length > 0) {
             containers.forEach(c => {
                 // if label_enable is false then exclude any specifically false labelled containers
                 if (LABEL_ENABLE == 'false' && JSON.stringify(c.Labels).includes('"monocker.enable":"false"')) {
