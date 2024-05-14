@@ -1,6 +1,8 @@
 import Telegram from "telegram-notify";
 import Docker from "dockerode";
-import pjson from "./package.json" assert {type: "json"} ;
+//const pjson =  require("./package.json");
+import { createRequire } from "module";
+const pjson = createRequire(import.meta.url)("./package.json");
 import PushBullet from "pushbullet";
 import Pushover from 'node-pushover';
 import { Webhook } from 'discord-webhook-node';
