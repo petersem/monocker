@@ -118,58 +118,61 @@ async function list(){
     docker.listContainers(opts, function(err, containers) {
         // check for changes in status (first run is populating data only)
         let newConArray = [];
-        containers.forEach(c => {
-            // if label_enable is false then exclude any specifically false labelled containers
-            if(LABEL_ENABLE=='false' && JSON.stringify(c.Labels).includes('"monocker.enable":"false"')){
-                if(isFirstRun==true){
-                    console.log('    - Excluding: ' + c.Names[0].replace("/",""));
-                    //send('Excluding: ' + c.Names[0].replace("/",""));
-                    messages += 'Excluding: ' + c.Names[0].replace("/","") + "\r\n";
-                }
-            }
-            else{
-                // If label_enable is true, list the specifically included containers
-                if(LABEL_ENABLE=='true' && JSON.stringify(c.Labels).includes('"monocker.enable":"true"')){
-                    if(isFirstRun==true){
-                        console.log('    - Monitoring: ' + c.Names[0].replace("/",""));
-                        //send('Monitoring: ' + c.Names[0].replace("/",""));
-                        messages += 'Monitoring: ' + c.Names[0].replace("/","") + "\r\n";
+        if (containers > 0) {
+            containers.forEach(c => {
+                // if label_enable is false then exclude any specifically false labelled containers
+                if (LABEL_ENABLE == 'false' && JSON.stringify(c.Labels).includes('"monocker.enable":"false"')) {
+                    if (isFirstRun == true) {
+                        console.log('    - Excluding: ' + c.Names[0].replace("/", ""));
+                        //send('Excluding: ' + c.Names[0].replace("/",""));
+                        messages += 'Excluding: ' + c.Names[0].replace("/", "") + "\r\n";
                     }
                 }
-                // determine if covered by healthcheck
-                let hcStatus = "";
-                if(c.Status.includes("(healthy)")) hcStatus="(healthy)"
-                if(c.Status.includes("(unhealthy)")) hcStatus="(unhealthy)"
-                if(monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0 ){
-                    // exclude exited status if set
-                    if(EXCLUDE_EXITED == 'true' && c.State.toLocaleLowerCase() == 'exited'){
-                        // ignore 
-                    }
-                    else{
-                        // if only offline is set, then only show state changes that are offline
-                        var output = c.Names[0].replace("/","") + ": " + c.State + " " + hcStatus;
-                        if(SHA.toLowerCase()=='true'){
-                            output += " " + c.ImageID
+                else {
+                    // If label_enable is true, list the specifically included containers
+                    if (LABEL_ENABLE == 'true' && JSON.stringify(c.Labels).includes('"monocker.enable":"true"')) {
+                        if (isFirstRun == true) {
+                            console.log('    - Monitoring: ' + c.Names[0].replace("/", ""));
+                            //send('Monitoring: ' + c.Names[0].replace("/",""));
+                            messages += 'Monitoring: ' + c.Names[0].replace("/", "") + "\r\n";
                         }
-                        if(ONLY_OFFLINE_STATES=='true'){
-                            if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
+                    }
+                    // determine if covered by healthcheck
+                    let hcStatus = "";
+                    if (c.Status.includes("(healthy)")) hcStatus = "(healthy)"
+                    if (c.Status.includes("(unhealthy)")) hcStatus = "(unhealthy)"
+                    if (monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0) {
+                        // exclude exited status if set
+                        if (EXCLUDE_EXITED == 'true' && c.State.toLocaleLowerCase() == 'exited') {
+                            // ignore 
+                        }
+                        else {
+                            // if only offline is set, then only show state changes that are offline
+                            var output = c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus;
+                            if (SHA.toLowerCase() == 'true') {
+                                output += " " + c.ImageID
+                            }
+                            if (ONLY_OFFLINE_STATES == 'true') {
+                                if (offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)) {
+                                    console.log("    - " + output);
+                                    //send(output);
+                                    messages += output + "\r\n";
+                                }
+                            }
+                            else {
                                 console.log("    - " + output);
                                 //send(output);
+                                console.log('*****' + output);
                                 messages += output + "\r\n";
                             }
                         }
-                        else{
-                            console.log("    - " + output);
-                            //send(output);
-                            console.log('*****' + output);
-                            messages += output+ "\r\n";
-                        }
                     }
+                    // create new container array
+                    newConArray.push(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus);
                 }
-                // create new container array
-                newConArray.push(c.Id + "," + c.State + "," + c.Names[0] + ","  + hcStatus);
             }
-        });
+            );
+        }
         if(isFirstRun==true){
             console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
             if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
