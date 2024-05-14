@@ -1,6 +1,6 @@
 {
   "name": "monocker",
-  "version": "2.9.2",
+  "version": "2.9.3",
   "description": "Monitors and alerts for docker containers state changes",
   "main": "index.js",
   "scripts": {
