@@ -17,7 +17,7 @@ const server = http.createServer(requestListener);
 server.listen(port, host, () => {});
 
 // main program
-let docker = new Docker();
+let docker = new Docker({socketPath: '/var/run/docker.sock'});
 // var docker = new Docker({
 //      protocol: 'http', //you can enforce a protocol
 //      host: '192.168.1.135',
@@ -103,7 +103,7 @@ async function send(message) {
 
 async function list(){
     let opts;
-
+    let messages = "";
     if(LABEL_ENABLE=='true'){
         opts = {
             "filters": '{"label": ["monocker.enable=true"]}'
@@ -123,7 +123,8 @@ async function list(){
             if(LABEL_ENABLE=='false' && JSON.stringify(c.Labels).includes('"monocker.enable":"false"')){
                 if(isFirstRun==true){
                     console.log('    - Excluding: ' + c.Names[0].replace("/",""));
-                    send('Excluding: ' + c.Names[0].replace("/",""));
+                    //send('Excluding: ' + c.Names[0].replace("/",""));
+                    messages += 'Excluding: ' + c.Names[0].replace("/","") + "\r\n";
                 }
             }
             else{
@@ -131,7 +132,8 @@ async function list(){
                 if(LABEL_ENABLE=='true' && JSON.stringify(c.Labels).includes('"monocker.enable":"true"')){
                     if(isFirstRun==true){
                         console.log('    - Monitoring: ' + c.Names[0].replace("/",""));
-                        send('Monitoring: ' + c.Names[0].replace("/",""));
+                        //send('Monitoring: ' + c.Names[0].replace("/",""));
+                        messages += 'Monitoring: ' + c.Names[0].replace("/","") + "\r\n";
                     }
                 }
                 // determine if covered by healthcheck
@@ -152,12 +154,15 @@ async function list(){
                         if(ONLY_OFFLINE_STATES=='true'){
                             if(offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)){
                                 console.log("    - " + output);
-                                send(output);
+                                //send(output);
+                                messages += output + "\r\n";
                             }
                         }
                         else{
                             console.log("    - " + output);
-                            send(output);
+                            //send(output);
+                            console.log('*****' + output);
+                            messages += output+ "\r\n";
                         }
                     }
                 }
@@ -168,7 +173,8 @@ async function list(){
         if(isFirstRun==true){
             console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
             if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
-                send("Currently monitoring " + newConArray.length + " (running) containers");
+                //send("Currently monitoring " + newConArray.length + " (running) containers");
+                messages += "Currently monitoring " + newConArray.length + " (running) containers" + "\r\n";
             }
             isFirstRun=false;
         }
@@ -184,11 +190,19 @@ async function list(){
                         output += " " + c.ImageID
                     }
                     console.log("    - " + output);
-                    send(output)
+                    //send(output)
+                    messages += output + "\r\n";
                 }
             });
         }
 
+        // do final send of any messages generated
+        //send(messages.length);
+        if(messages.length != 0){
+           send(messages);
+        }
+//        let now = new Date();
+//        send('tick: ' + now.toLocaleString());
         // assign new array to be current array state
         monContainers = newConArray;
     }, Promise.resolve(0));
@@ -203,6 +217,7 @@ async function run(){
     runClock = setInterval(run,(PERIOD * 1000));
 }
 
+
 console.log(`Monitoring started 
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Polling period: ` + PERIOD + ` seconds 
@@ -215,12 +230,13 @@ console.log(`Monitoring started
 console.log()
 if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
     send(`Monitoring started 
-        - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
-        - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
-        - Only include labelled containers: ` + LABEL_ENABLE + `
-        - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
-        - Disable Startup Messages: ` + DISABLE_STARTUP_MSG + `
-        - Display SHA ID: ` + SHA);
+        -- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
+        -- Polling period: ` + PERIOD + ` seconds` +`
+        -- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
+        -- Only include labelled containers: ` + LABEL_ENABLE +`
+        -- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
+        -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +`
+        -- Display SHA ID: ` + SHA);
 }
 
 // start processing
