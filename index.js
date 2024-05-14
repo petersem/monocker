@@ -1,12 +1,12 @@
-const Telegram = require('telegram-notify');
-const Docker = require('dockerode');
-const pjson = require("./package.json");
-const PushBullet = require('pushbullet');
-const Pushover = require('node-pushover');
-const { Webhook } = require('discord-webhook-node');
+import Telegram from "telegram-notify";
+import Docker from "dockerode";
+import pjson from "./package.json" assert {type: "json"} ;
+import PushBullet from "pushbullet";
+import Pushover from 'node-pushover';
+import { Webhook } from 'discord-webhook-node';
 
 // for health check
-const http = require("http");
+import http from "http";
 const host = 'localhost';
 const port = 8000;
 const requestListener = function (req, res) {
