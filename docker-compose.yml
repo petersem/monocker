@@ -19,11 +19,13 @@ services:
       # [Optional] - Supress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
       # Specify the messaging platform and details, or omit this if only wanting container logs
-      MESSAGE_PLATFORM: 'discord@webhookURL'
+      MESSAGE_PLATFORM: 'discord@'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: 'discord@webhook_url'
-
+      # Optional avatar image to add to messages. Handy if you are running Monocker on different machines
+      # - ONLY supported by discord
+      # SERVER_AVATAR: 'https://content.invisioncic.com/u329766/monthly_2024_05/monocker.png.ba5ffdb390b627097d2a53645cf87350.png'
       # [Optional] - Set this value to a docker socket URL, if you want to connect to docker this way. Leave it blank or omit it otherwise
       # DOCKER_HOST: 'tcp://192.168.1.134:2375'
 
