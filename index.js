@@ -1,11 +1,12 @@
 import Telegram from "telegram-notify";
 import Docker from "dockerode";
-//const pjson =  require("./package.json");
 import { createRequire } from "module";
 const pjson = createRequire(import.meta.url)("./package.json");
 import PushBullet from "pushbullet";
 import Pushover from 'node-pushover';
 import { Webhook } from 'discord-webhook-node';
+import { NtfyClient } from 'ntfy';
+import { WebClient } from '@slack/web-api';
 
 // for health check
 import http from "http";
@@ -20,11 +21,7 @@ server.listen(port, host, () => {});
 
 // main program
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
-// var docker = new Docker({
-//      protocol: 'http', //you can enforce a protocol
-//      host: '192.168.1.135',
-//      port: 2375 //process.env.DOCKER_PORT || 2375
-//  });
+
 const NODE_ENV = process.env.NODE_ENV || "production";
 const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const SERVER_AVATAR = process.env.SERVER_AVATAR || "";
@@ -37,16 +34,18 @@ const SHA = process.env.SHA || 'false';
 if(process.env.PERIOD == "" || process.env.PERIOD === undefined || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
 const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
-      
-let msgDetails = MESSAGE_PLATFORM.split('@');
+const PERIOD = process.env.PERIOD;
+const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || "false";
+
+// NTFY settings
+const CUSTOM_NTFY_SERVER = process.env.CUSTOM_NTFY_SERVER || null;
+const NTFY_USER = process.env.NTFY_USER || "";
+const NTFY_PASS = process.env.NTFY_PASS || "";
+
+let msgDetails = MESSAGE_PLATFORM.split("@");
 let isFirstRun = true;
 let monContainers = [];
-let offlineStates = [
-    'exited',
-    'dead',
-    'running (unhealthy)',
-    'paused'
-];
+let offlineStates = ["exited", "dead", "running (unhealthy)", "paused"];
 let runClock;
 
 console.log("-------------------------------------------------------");
@@ -56,39 +55,97 @@ console.log(" ");
 console.log(" Version: " + pjson.version);
 console.log("-------------------------------------------------------");
 console.log(" ");
-async function sendTelegram(message){
-    let notify = new Telegram({token:msgDetails[1], chatId:msgDetails[2]});
-    await notify.send(message, {timeout: 10000}, {parse_mode: 'html'});
+
+async function sendTelegram(message) {
+    let notify = new Telegram({ token: msgDetails[1], chatId: msgDetails[2] });
+    await notify.send(message, { timeout: 10000 }, { parse_mode: "html" });
 }
 
-async function sendPushbullet(title, message){
+async function sendPushbullet(title, message) {
     var pusher = new PushBullet(msgDetails[1]);
-    pusher.note(msgDetails[2], title, message, function(error, response) {});
+    pusher.note(msgDetails[2], title, message, function (err, res) {
+        if (err) return console.log(err.message);
+        console.error(res.message);
+    });
 }
 
-async function sendPushover(title, message){
+async function sendPushover(title, message) {
     var push = new Pushover({
         token: msgDetails[2],
-        user: msgDetails[1]
+        user: msgDetails[1],
     });
-    push.send(title, message);
+    push.send(title, message, function (err, res) {
+        if (err) return console.log(err);
+        console.error(res);
+    });
 }
 
-async function sendDiscord(title, message){
+async function sendDiscord(title, message) {
     const hook = new Webhook(msgDetails[1]);
     hook.setUsername(title);
     hook.setAvatar(SERVER_AVATAR);
-    hook.send(message);
+    try {
+        await hook.send(message);
+    } catch (e) {
+        console.error(e.message);
+    }
+}
+
+async function sendNtfyAuth(title, message) {
+    const ntfy = new NtfyClient();
+    try {
+        await ntfy.publish({
+            authorization: {
+                password: NTFY_PASS,
+                username: NTFY_USER,
+            },
+            server: CUSTOM_NTFY_SERVER,
+            topic: msgDetails[1],
+            title: title,
+            message: message,
+            iconURL: SERVER_AVATAR,
+        });
+    } catch (e) {
+        console.error(e.message);
+    }
+}
+
+async function sendNtfy(title, message) {
+    const ntfy = new NtfyClient();
+    try {
+        await ntfy.publish({
+            server: CUSTOM_NTFY_SERVER,
+            topic: msgDetails[1],
+            title: title,
+            message: message,
+            iconURL: SERVER_AVATAR,
+        });
+    } catch (e) {
+        console.error(e.message);
+    }
+}
+
+async function sendSlack(title, message) {
+    const web = new WebClient(msgDetails[1]);
+    try {
+        await web.chat.postMessage({
+            channel: msgDetails[2],
+            username: title,
+            text: message,
+            icon_url: SERVER_AVATAR,
+        });
+    } catch (e) {
+        console.error(e.message);
+    }
 }
 
 async function send(message) {
     let title = "MONOCKER";
-    if(SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")"
+    if (SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")";
 
-    switch(msgDetails[0].toLowerCase()) {
+    switch (msgDetails[0].toLowerCase()) {
         case "telegram":
-            sendTelegram(`<b>` + title + `</b>
-` + message);
+            sendTelegram(`<b>` + title + `</b>` + message);
             break;
         case "pushbullet":
             sendPushbullet(title, message);
@@ -99,22 +156,29 @@ async function send(message) {
         case "discord":
             sendDiscord(title, message);
             break;
+        case "ntfy":
+            if (NTFY_PASS.length == 0) sendNtfy(title, message);
+            else sendNtfyAuth(title, message);
+            break;
+        case "slack":
+            sendSlack(title, message);
+            break;
         case "default":
             // do nothing
             break;
     }
 }
 
-async function list(){
+async function list() {
     let opts;
     let messages = "";
-    if(LABEL_ENABLE=='true'){
+    if(LABEL_ENABLE == 'true') {
+
         opts = {
-            "filters": '{"label": ["monocker.enable=true"]}'
+            filters: '{"label": ["monocker.enable=true"]}',
         };
-    }
-    else{
-        opts = {all: true};
+    } else {
+        opts = { all: true };
     }
 
     //let now = new Date();
@@ -143,6 +207,7 @@ async function list(){
                     }
                     // determine if covered by healthcheck
                     let hcStatus = "";
+
                     if (c.Status.includes("(healthy)")) hcStatus = "(healthy)"
                     if (c.Status.includes("(unhealthy)")) hcStatus = "(unhealthy)"
                     if (monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0) {
@@ -215,15 +280,14 @@ async function list(){
     }, Promise.resolve(0));
 }
 
-async function run(){
+async function run() {
     // stop timer to ensure no race conditions
     clearInterval(runClock);
     // run check
     await list();
     // restart timer
-    runClock = setInterval(run,(PERIOD * 1000));
+    runClock = setInterval(run, PERIOD * 1000);
 }
-
 
 console.log(`Monitoring started 
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
