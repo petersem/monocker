@@ -11,17 +11,17 @@ $ret=0
 if (Test-Path "$basedir/node$exe") {
   # Support pipeline input
   if ($MyInvocation.ExpectingInput) {
-    $input | & "$basedir/node$exe"  "$basedir/../semver/bin/semver" $args
+    $input | & "$basedir/node$exe"  "$basedir/../semver/bin/semver.js" $args
   } else {
-    & "$basedir/node$exe"  "$basedir/../semver/bin/semver" $args
+    & "$basedir/node$exe"  "$basedir/../semver/bin/semver.js" $args
   }
   $ret=$LASTEXITCODE
 } else {
   # Support pipeline input
   if ($MyInvocation.ExpectingInput) {
-    $input | & "node$exe"  "$basedir/../semver/bin/semver" $args
+    $input | & "node$exe"  "$basedir/../semver/bin/semver.js" $args
   } else {
-    & "node$exe"  "$basedir/../semver/bin/semver" $args
+    & "node$exe"  "$basedir/../semver/bin/semver.js" $args
   }
   $ret=$LASTEXITCODE
 }

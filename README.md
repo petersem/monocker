@@ -13,6 +13,7 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change
 - Monitors 'state' changes for all containers (every 10 seconds)
 - Specific inclusions or exclusions of containers to monitor
 - Optionally, only alert on state changes to (paused, exited, running (unhealthy), or dead)
+- In-built Docker healthcheck
 
 ## Future Considerations
 - Additional messaging platform support
@@ -26,11 +27,13 @@ services:
     container_name: monocker
     image: petersem/monocker
     environment:
+      # Optional - set this to use a docker interface other than the default
+      # DOCKER_HOST: tcp://docker-socket-proxy:2375
       # Optional label to preface messages. Handy if you are running multiple versions of Monocker
-      SERVER_LABEL: 'Dev'
-      # Optional avatar image to add to messages. Handy if you are running Monocker on different machines
+      SERVER_LABEL: 'Your server name'
+      # Optional avatar image URL to add to messages. Handy if you are running Monocker on different machines
       # - supported by discord & ntfy (mobile app) & slack
-      SERVER_AVATAR: 'https://www.docker.com/wp-content/uploads/2021/10/Moby-logo-sm.png'
+      SERVER_AVATAR: ''
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
@@ -54,11 +57,14 @@ services:
       #CUSTOM_NTFY_SERVER: 'https://custom.ntfy.com' # use your own NTFY server
       #NTFY_USER: 'user' # use a username and password to login (on ntfy.sh or your own server)
       #NTFY_PASS: 'password' 
+
+      # [optional] - adds SHA ID for all container references. 'true' or 'false' (default)
+      SHA: 'false'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 ```
-- For Telegram: See documentation for how to obtain ID values. 
+- For Telegram: See documentation for how to obtain ID values
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 - For Discord: See Discord doco for how to create a webhook and get the url
@@ -70,6 +76,11 @@ services:
   If you would like to use a username and password (either on ntfy.sh or on your own server), uncomment the variables `NTFY_USER` and `NTFY_PASS`
   
   (it would be advised to store these in an environment file and not directly use them in your docker-compose.yml)
+
+#### DOCKER_HOST
+This is an optional value, and if set will change the interface used to communicate with Docker. This can be a UNIX socket (`unix://`), Windows named pipe (`npipe://`) or TCP connection (`tcp://`). If it's a pipe or socket, be sure to mount the connection as a volume. If the connection is proxied, ensure that `GET` requests are allowed on the `/containers` endpoint.
+
+By default, this value is unset and the connection will use `/var/run/docker.sock`.
 
 #### LABEL_ENABLE
 This is an optional value, and defaults to false if it is not specified. This feature allows you to specify (with labels) 'either' specific containers to monitor or exclude from monitoring. 
