@@ -7,7 +7,9 @@ import Pushover from 'node-pushover';
 import { Webhook } from 'discord-webhook-node';
 import { NtfyClient } from 'ntfy';
 import { WebClient } from '@slack/web-api';
-
+process.on('warning', (warning) => {
+    console.log(warning.stack);
+});
 // for health check
 import http from "http";
 const host = 'localhost';
@@ -21,7 +23,6 @@ server.listen(port, host, () => {});
 
 // main program
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
-
 const NODE_ENV = process.env.NODE_ENV || "production";
 const SERVER_LABEL = process.env.SERVER_LABEL || "";
 const SERVER_AVATAR = process.env.SERVER_AVATAR || "";
@@ -34,8 +35,6 @@ const SHA = process.env.SHA || 'false';
 if(process.env.PERIOD == "" || process.env.PERIOD === undefined || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
 const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
-const PERIOD = process.env.PERIOD;
-const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || "false";
 
 // NTFY settings
 const CUSTOM_NTFY_SERVER = process.env.CUSTOM_NTFY_SERVER || null;
@@ -290,6 +289,7 @@ async function run() {
 }
 
 console.log(`Monitoring started 
+     - Version: ` + pjson.version + `
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Polling period: ` + PERIOD + ` seconds 
      - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
@@ -301,12 +301,13 @@ console.log(`Monitoring started
 console.log()
 if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
     send(`Monitoring started 
+        -- Version: ` + pjson.version + `
         -- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
         -- Polling period: ` + PERIOD + ` seconds` +`
         -- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
         -- Only include labelled containers: ` + LABEL_ENABLE +`
         -- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
-        -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +`
+        -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +` 
         -- Display SHA ID: ` + SHA);
 }
 

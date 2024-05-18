@@ -4,16 +4,18 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change
 ![Telegram Alerts](https://raw.githubusercontent.com/petersem/monocker/master/doco/telegram.PNG)
 
 ## Features
-- Telegram integration
-- Pushbullet integration
-- Pushover integration
-- Discord integration (via webhooks)
-- Ntfy integration
-- Slack integration
 - Monitors 'state' changes for all containers (every 10 seconds)
 - Specific inclusions or exclusions of containers to monitor
 - Optionally, only alert on state changes to (paused, exited, running (unhealthy), or dead)
 - In-built Docker healthcheck
+### Integration with
+- Telegram
+- Pushbullet
+- Pushover
+- Discord (via webhooks)
+- Ntfy
+- Slack
+
 
 ## Future Considerations
 - Additional messaging platform support
@@ -49,13 +51,13 @@ services:
       # [Optional] - Regardless of any other settings, you can ignore or include 'exited'
       EXCLUDE_EXITED: 'false'      
       # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
-      PERIOD: 10
+      PERIOD: 30
       # [Optional] - Supress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
 
       ## ADVANCED NTFY SETTINGS
       #CUSTOM_NTFY_SERVER: 'https://custom.ntfy.com' # use your own NTFY server
-      #NTFY_USER: 'user' # use a username and password to login (on ntfy.sh or your own server)
+      #NTFY_USER: 'user' # use a username and password to login (on ntfy.sh or your own server. Option if you have your own server open)
       #NTFY_PASS: 'password' 
 
       # [optional] - adds SHA ID for all container references. 'true' or 'false' (default)

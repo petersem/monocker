@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   monocker:
     container_name: monocker
@@ -14,13 +12,13 @@ services:
       # -> ONLY supported by discord & ntfy (mobile app)
       SERVER_AVATAR: 'https://content.invisioncic.com/u329766/monthly_2024_05/monocker.png.ba5ffdb390b627097d2a53645cf87350.png'
       # [Optional] - Set this value to a docker socket URL, if you want to connect to docker this way. Leave it blank or omit it otherwise
-      # DOCKER_HOST: 'tcp://192.168.1.134:2375'
+      #DOCKER_HOST: 'tcp://192.168.1.134:2375'
       
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
-      MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
+      # MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
-      # MESSAGE_PLATFORM: 'discord@webhook_url'
+      MESSAGE_PLATFORM: 'discord@xxxxx'
       # MESSAGE_PLATFORM: 'ntfy@topic_title'
       # MESSAGE_PLATFORM: 'slack@bot_user_oauth_token@your_chat_id'
       # MESSAGE_PLATFORM: ''
