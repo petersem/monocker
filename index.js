@@ -55,6 +55,31 @@ console.log(" Version: " + pjson.version);
 console.log("-------------------------------------------------------");
 console.log(" ");
 
+console.log(`Monitoring started 
+     - Version: ` + pjson.version + `
+     - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
+     - Polling period: ` + PERIOD + ` seconds 
+     - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
+     - Only include labelled containers: ` + LABEL_ENABLE + ` 
+     - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
+     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase() + `
+     - Display SHA ID: ` + SHA);
+
+console.log()
+if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
+    send(`Monitoring started 
+        -- Version: ` + pjson.version + `
+        -- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
+        -- Polling period: ` + PERIOD + ` seconds` +`
+        -- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
+        -- Only include labelled containers: ` + LABEL_ENABLE +`
+        -- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
+        -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +` 
+        -- Display SHA ID: ` + SHA);
+}
+
+
+
 async function sendTelegram(message) {
     let notify = new Telegram({ token: msgDetails[1], chatId: msgDetails[2] });
     await notify.send(message, { timeout: 10000 }, { parse_mode: "html" });
@@ -96,13 +121,13 @@ async function sendNtfyAuth(title, message) {
         await ntfy.publish({
             authorization: {
                 password: NTFY_PASS,
-                username: NTFY_USER,
+                username: NTFY_USER
             },
             server: CUSTOM_NTFY_SERVER,
             topic: msgDetails[1],
             title: title,
             message: message,
-            iconURL: SERVER_AVATAR,
+            iconURL: SERVER_AVATAR
         });
     } catch (e) {
         console.error(e.message);
@@ -286,29 +311,6 @@ async function run() {
     await list();
     // restart timer
     runClock = setInterval(run, PERIOD * 1000);
-}
-
-console.log(`Monitoring started 
-     - Version: ` + pjson.version + `
-     - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
-     - Polling period: ` + PERIOD + ` seconds 
-     - Only offline state monitoring: ` + ONLY_OFFLINE_STATES + `
-     - Only include labelled containers: ` + LABEL_ENABLE + ` 
-     - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
-     - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase() + `
-     - Display SHA ID: ` + SHA);
-
-console.log()
-if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
-    send(`Monitoring started 
-        -- Version: ` + pjson.version + `
-        -- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
-        -- Polling period: ` + PERIOD + ` seconds` +`
-        -- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
-        -- Only include labelled containers: ` + LABEL_ENABLE +`
-        -- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
-        -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +` 
-        -- Display SHA ID: ` + SHA);
 }
 
 // start processing
