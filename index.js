@@ -78,8 +78,6 @@ if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
         -- Display SHA ID: ` + SHA);
 }
 
-
-
 async function sendTelegram(message) {
     let notify = new Telegram({ token: msgDetails[1], chatId: msgDetails[2] });
     await notify.send(message, { timeout: 10000 }, { parse_mode: "html" });
@@ -130,7 +128,7 @@ async function sendNtfyAuth(title, message) {
             iconURL: SERVER_AVATAR
         });
     } catch (e) {
-        console.error(e.message);
+        console.error("** NTFY Exception: " + e.message);
     }
 }
 
@@ -145,7 +143,7 @@ async function sendNtfy(title, message) {
             iconURL: SERVER_AVATAR,
         });
     } catch (e) {
-        console.error(e.message);
+        console.error("** NTFY Exception: " + e.message);
     }
 }
 
@@ -315,3 +313,4 @@ async function run() {
 
 // start processing
 run();
+
