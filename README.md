@@ -1,5 +1,5 @@
 # Monocker
-Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change
+Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 
 ![Telegram Alerts](https://raw.githubusercontent.com/petersem/monocker/master/doco/telegram.PNG)
 
