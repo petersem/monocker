@@ -66,17 +66,6 @@ console.log(`Monitoring started
      - Display SHA ID: ` + SHA);
 
 console.log()
-if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
-    send(`Monitoring started 
-        -- Version: ` + pjson.version + `
-        -- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
-        -- Polling period: ` + PERIOD + ` seconds` +`
-        -- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
-        -- Only include labelled containers: ` + LABEL_ENABLE +`
-        -- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
-        -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +` 
-        -- Display SHA ID: ` + SHA);
-}
 
 async function sendTelegram(message) {
     let notify = new Telegram({ token: msgDetails[1], chatId: msgDetails[2] });
@@ -268,6 +257,16 @@ async function list() {
             console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
             if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
                 //send("Currently monitoring " + newConArray.length + " (running) containers");
+                messages =`Monitoring started 
+                -- Version: ` + pjson.version + `
+                -- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
+                -- Polling period: ` + PERIOD + ` seconds` +`
+                -- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
+                -- Only include labelled containers: ` + LABEL_ENABLE +`
+                -- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
+                -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +` 
+                -- Display SHA ID: ` + SHA +`
+                `;
                 messages += "Currently monitoring " + newConArray.length + " (running) containers" + "\r\n";
             }
             isFirstRun=false;

@@ -1,0 +1,26 @@
+services:
+  monocker:
+    container_name: monocker
+    image: monocker
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      SERVER_LABEL: $SERVER_LABEL
+      SERVER_AVATAR: $SERVER_AVATAR
+      DOCKER_HOST: $DOCKER_HOST
+      MESSAGE_PLATFORM: $MESSAGE_PLATFORM
+      LABEL_ENABLE: $LABEL_ENABLE
+      ONLY_OFFLINE_STATES: $ONLY_OFFLINE_STATES
+      EXCLUDE_EXITED: $EXCLUDE_EXITED
+      PERIOD: $PERIOD
+      DISABLE_STARTUP_MSG: $DISABLE_STARTUP_MSG
+
+      CUSTOM_NTFY_SERVER: $CUSTOM_NTFY_SERVER 
+      NTFY_USER: $NTFY_USER 
+      NTFY_PASS: $NTFY_PASS
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+
