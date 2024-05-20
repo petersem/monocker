@@ -37,7 +37,7 @@ services:
       DISABLE_STARTUP_MSG: 'false'
 
       ## ADVANCED NTFY SETTINGS
-      # CUSTOM_NTFY_SERVER: 'https://ntfy.nesretep.net' # use your own NTFY server
+      # CUSTOM_NTFY_SERVER: 'https://ntfy.yourdomain.net' # use your own NTFY server
       # NTFY_USER: 'user' # use a username and password to login (on ntfy.sh or your own server)
       # NTFY_PASS: 'psw' 
     volumes:
