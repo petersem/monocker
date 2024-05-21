@@ -12,10 +12,10 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 - Telegram
 - Pushbullet
 - Pushover
-- Discord (via webhooks)
+- Discord
 - Ntfy
 - Slack
-
+- Gotify
 
 ## Future Considerations
 - Additional messaging platform support
@@ -33,11 +33,11 @@ services:
       # DOCKER_HOST: tcp://docker-socket-proxy:2375
       # Optional label to preface messages. Handy if you are running multiple versions of Monocker
       SERVER_LABEL: 'Your server name'
-      # Optional avatar image URL to add to messages. Handy if you are running Monocker on different machines
-      # - supported by discord & ntfy (mobile app) & slack
-      SERVER_AVATAR: ''
+      # Optional avatar image URL to add to messages. Handy if you are running Monocker on different machines (discord, ntfy, and slack)
+      SERVER_AVATAR: 'https://content.invisioncic.com/u329766/monthly_2024_05/monocker.png.ba5ffdb390b627097d2a53645cf87350.png'
       # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
       MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
+      # MESSAGE_PLATFORM: 'gotify@app_token'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: 'discord@webhook_url'
@@ -54,12 +54,10 @@ services:
       PERIOD: 30
       # [Optional] - Supress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
-
       ## ADVANCED NTFY SETTINGS
       #CUSTOM_NTFY_SERVER: 'https://custom.ntfy.com' # use your own NTFY server
       #NTFY_USER: 'user' # use a username and password to login (on ntfy.sh or your own server. Option if you have your own server open)
       #NTFY_PASS: 'password' 
-
       # [optional] - adds SHA ID for all container references. 'true' or 'false' (default)
       SHA: 'false'
     volumes:

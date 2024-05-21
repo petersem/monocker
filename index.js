@@ -7,6 +7,8 @@ import Pushover from 'node-pushover';
 import { Webhook } from 'discord-webhook-node';
 import { NtfyClient } from 'ntfy';
 import { WebClient } from '@slack/web-api';
+import { gotify } from 'gotify';
+
 process.on('warning', (warning) => {
     console.log(warning.stack);
 });
@@ -50,6 +52,7 @@ let runClock;
 console.log("-------------------------------------------------------");
 console.log(" Monocker - MONitor dOCKER container states");
 console.log(" Developed by Matt Petersen - Brisbane Australia");
+console.log(" Donate: https://www.paypal.com/paypalme/thanksmp")
 console.log(" ");
 console.log(" Version: " + pjson.version);
 console.log("-------------------------------------------------------");
@@ -78,6 +81,16 @@ async function sendPushbullet(title, message) {
         if (err) return console.log(err.message);
         console.error(res.message);
     });
+}
+
+async function sendGotify(title, message) {
+    await gotify({
+        server: msgDetails[1],
+        app: msgDetails[2],
+        title: title,
+        message: message,
+        priority: 5
+      });
 }
 
 async function sendPushover(title, message) {
@@ -174,6 +187,9 @@ async function send(message) {
         case "slack":
             sendSlack(title, message);
             break;
+        case "gotify":
+            sendGotify(title, message);
+            break;
         case "default":
             // do nothing
             break;
@@ -234,7 +250,7 @@ async function list() {
                             }
                             if (ONLY_OFFLINE_STATES == 'true') {
                                 if (offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)) {
-                                    console.log("    - " + output);
+                                    console.log("     - " + output);
                                     //send(output);
                                     messages += output + "\r\n";
                                 }
@@ -242,7 +258,6 @@ async function list() {
                             else {
                                 console.log("    - " + output);
                                 //send(output);
-                                console.log('*****' + output);
                                 messages += output + "\r\n";
                             }
                         }
@@ -257,16 +272,16 @@ async function list() {
             console.log("     - Currently monitoring " + newConArray.length + " (running) containers");
             if(DISABLE_STARTUP_MSG.toLowerCase()!='true'){
                 //send("Currently monitoring " + newConArray.length + " (running) containers");
-                messages =`Monitoring started 
-                -- Version: ` + pjson.version + `
-                -- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
-                -- Polling period: ` + PERIOD + ` seconds` +`
-                -- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
-                -- Only include labelled containers: ` + LABEL_ENABLE +`
-                -- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
-                -- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +` 
-                -- Display SHA ID: ` + SHA +`
-                `;
+                messages ="Monitoring started" + `
+- Version: ` + pjson.version + `
+- Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] +`
+- Polling period: ` + PERIOD + ` seconds` +`
+- Only offline state monitoring: ` + ONLY_OFFLINE_STATES +`
+- Only include labelled containers: ` + LABEL_ENABLE +`
+- Do not monitor 'Exited': ` + EXCLUDE_EXITED +`
+- Disable Startup Messages: ` + DISABLE_STARTUP_MSG +` 
+- Display SHA ID: ` + SHA +`
+`;
                 messages += "Currently monitoring " + newConArray.length + " (running) containers" + "\r\n";
             }
             isFirstRun=false;

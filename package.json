@@ -1,6 +1,6 @@
 {
   "name": "monocker",
-  "version": "2.10.4",
+  "version": "2.11.0",
   "description": "Monitors and alerts for docker containers state changes",
   "type": "module",
   "main": "index.js",
@@ -32,6 +32,7 @@
     "discord-webhook-node": "^1.1.8",
     "dockerode": "^4.0.2",
     "express": "^4.19.2",
+    "gotify": "^1.1.0",
     "node-pushover": "^1.0.0",
     "ntfy": "^1.5.3",
     "pushbullet": "^3.0.0",

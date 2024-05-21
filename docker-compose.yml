@@ -19,6 +19,7 @@ services:
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       MESSAGE_PLATFORM: 'discord@webhook_url'
+      # MESSAGE_PLATFORM: 'gotify@app_token'
       # MESSAGE_PLATFORM: 'ntfy@topic_title'
       # MESSAGE_PLATFORM: 'slack@bot_user_oauth_token@your_chat_id'
       # MESSAGE_PLATFORM: ''
