@@ -1,7 +1,7 @@
 # Monocker
 Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 
-![Telegram Alerts](https://raw.githubusercontent.com/petersem/monocker/master/doco/title.PNG)
+![image](/doco/title.PNG)
 
 ## Features
 - Monitors 'state' changes for all containers (every 10 seconds)
@@ -52,7 +52,7 @@ services:
       EXCLUDE_EXITED: 'false'      
       # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. (recommended 30, to reduce number of messages sent)
       PERIOD: 30
-      # [Optional] - Supress startup messages from being sent. Default is false
+      # [Optional] - Suppress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
       ## ADVANCED NTFY SETTINGS
       #CUSTOM_NTFY_SERVER: 'https://custom.ntfy.com' # use your own NTFY server
