@@ -36,7 +36,7 @@ services:
       EXCLUDE_EXITED: 'false'      
       # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
       PERIOD: 30
-      # [Optional] - Supress startup messages from being sent. Default is false
+      # [Optional] - Suppress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
 
       ## ADVANCED NTFY SETTINGS
