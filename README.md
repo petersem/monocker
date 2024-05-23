@@ -1,7 +1,7 @@
 # Monocker
 Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 
-![Telegram Alerts](https://raw.githubusercontent.com/petersem/monocker/master/doco/telegram.PNG)
+![Telegram Alerts](https://raw.githubusercontent.com/petersem/monocker/master/doco/title.PNG)
 
 ## Features
 - Monitors 'state' changes for all containers (every 10 seconds)
@@ -22,8 +22,6 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 
 ## Installation
 ```ya
-version: '2.4'
-
 services:
   monocker:
     container_name: monocker
@@ -35,14 +33,16 @@ services:
       SERVER_LABEL: 'Your server name'
       # Optional avatar image URL to add to messages. Handy if you are running Monocker on different machines (discord, ntfy, and slack)
       SERVER_AVATAR: 'https://content.invisioncic.com/u329766/monthly_2024_05/monocker.png.ba5ffdb390b627097d2a53645cf87350.png'
-      # Specify the messaging platform and details, or leave blank if only wanting container logs (pick one only)
-      MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
-      # MESSAGE_PLATFORM: 'gotify@app_token'
+      # Specify 'ONE' messaging platform, or leave blank if only wanting container logs
+      # MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
+      MESSAGE_PLATFORM: 'gotify@app_token'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: 'discord@webhook_url'
       # MESSAGE_PLATFORM: 'ntfy@topic_title'
       # MESSAGE_PLATFORM: 'slack@bot_user_oauth_token@your_chat_id'
+      # For Matrix, add the userid 'without' the leading @ sign. Values are server, userid, access-token, room-id
+      # MESSAGE_PLATFORM = matrix@https://matrix.org@user:matrix.org@access-token@room-id:matrix.org
       # MESSAGE_PLATFORM: ''
       # Optional - includes or excludes specified containers - default behaviour is false
       LABEL_ENABLE: 'false'
@@ -50,7 +50,7 @@ services:
       ONLY_OFFLINE_STATES: 'false'
       # [Optional] - Regardless of any other settings, you can ignore or include 'exited'
       EXCLUDE_EXITED: 'false'      
-      # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. 
+      # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. (recommended 30, to reduce number of messages sent)
       PERIOD: 30
       # [Optional] - Supress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
@@ -64,13 +64,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 ```
-- For Telegram: See documentation for how to obtain ID values
+- For Telegram: See [video](doco/telegram_chatid.mkv) and use this link for how to obtain ID values. https://api.telegram.org/bot%7Bbot-id%7D/getUpdates
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 - For Discord: See Discord doco for how to create a webhook and get the url
 - For Slack: See [documentation](doco/slack.md) for how to obtain ID values.
 - For Ntfy: create a new topic on https://ntfy.sh/app, use the name of the topic as follows: ntfy@MY_TOPIC_TITLE
-  
+- For Matrix, review these images for how to get [userID](/doc/matrix-user-id.png), [roomID](/doc/matrix-room-id.png), and [Access token](/doc/matrix-access-token.png)
+
   If you would like to use your own ntfy server you can add the environment variable `CUSTOM_NTFY_SERVER`
   
   If you would like to use a username and password (either on ntfy.sh or on your own server), uncomment the variables `NTFY_USER` and `NTFY_PASS`
