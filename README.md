@@ -1,7 +1,7 @@
 # Monocker
 Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 
-![image](/doco/title.PNG)
+![image](https://github.com/petersem/monocker/blob/master/doco/title.png?raw=true)
 
 ## Features
 - Monitors 'state' changes for all containers (every 10 seconds)
