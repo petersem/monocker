@@ -35,7 +35,7 @@ services:
       SERVER_AVATAR: 'https://content.invisioncic.com/u329766/monthly_2024_05/monocker.png.ba5ffdb390b627097d2a53645cf87350.png'
       # Specify 'ONE' messaging platform, or leave blank if only wanting container logs
       # MESSAGE_PLATFORM: 'telegram@your_bot_id@your_chat_id'
-      MESSAGE_PLATFORM: 'gotify@app_token'
+      MESSAGE_PLATFORM: 'gotify@server@app_token'
       # MESSAGE_PLATFORM: 'pushbullet@your_api_key@your_device_id'
       # MESSAGE_PLATFORM: 'pushover@your_user_key@your_app_api_token'
       # MESSAGE_PLATFORM: 'discord@webhook_url'
