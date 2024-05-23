@@ -63,14 +63,14 @@ services:
 | SHA                 |     False     | Will include the container SHA ID in sent messages |
 | MESSAGE_PLATFORM  |   True        | Specify 'ONE' messaging platform.|
 
-> 'pushbullet@your_api_key@your_device_id'
-> 'pushover@your_user_key@your_app_api_token'
-> 'discord@webhook_url'
-> 'ntfy@topic_title'
-> 'slack@bot_user_oauth_token@your_chat_id'
-> 'gotify@server_url@app_token'
-> 'telegram@your_bot_id@your_chat_id'
-> 'matrix@https://matrix.org@user:matrix.org@access-token@room-id:matrix.org'
+> - 'pushbullet@your_api_key@your_device_id'
+> - 'pushover@your_user_key@your_app_api_token'
+> - 'discord@webhook_url'
+> - 'ntfy@topic_title'
+> - 'slack@bot_user_oauth_token@your_chat_id'
+> - 'gotify@server_url@app_token'
+> - 'telegram@your_bot_id@your_chat_id'
+> - 'matrix@https://matrix.org@user:matrix.org@access-token@room-id:matrix.org'
 > _(For Matrix, add the userid 'without' the leading @ sign. Values are server, userid, access-token, room-id)_
 
 > #### Advanced NTFY Setting
