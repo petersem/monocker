@@ -8,6 +8,7 @@ import { Webhook } from 'discord-webhook-node';
 import { NtfyClient } from 'ntfy';
 import { WebClient } from '@slack/web-api';
 import { gotify } from 'gotify';
+import Matrix from "matrix-js-sdk";
 
 process.on('warning', (warning) => {
     console.log(warning.stack);
@@ -71,47 +72,91 @@ console.log(`Monitoring started
 console.log()
 
 async function sendTelegram(message) {
-    let notify = new Telegram({ token: msgDetails[1], chatId: msgDetails[2] });
-    await notify.send(message, { timeout: 10000 }, { parse_mode: "html" });
+    try {
+        let notify = new Telegram({ token: msgDetails[1], chatId: msgDetails[2] });
+        await notify.send(message, { timeout: 10000 }, { parse_mode: "html" });
+    } catch (e) {
+        console.error("** Telegram Exception: " + e.message);
+    }
 }
 
 async function sendPushbullet(title, message) {
-    var pusher = new PushBullet(msgDetails[1]);
-    pusher.note(msgDetails[2], title, message, function (err, res) {
-        if (err) return console.log(err.message);
-        console.error(res.message);
-    });
+    try {
+        var pusher = new PushBullet(msgDetails[1]);
+        pusher.note(msgDetails[2], title, message, function (err, res) {
+            if (err) return console.log(err.message);
+            console.error(res.message);
+        });
+    } catch (e) {
+        console.error("** Pushbullet Exception: " + e.message);
+    }
 }
 
 async function sendGotify(title, message) {
-    await gotify({
-        server: msgDetails[1],
-        app: msgDetails[2],
-        title: title,
-        message: message,
-        priority: 5
-      });
+//    try {
+        console.log(msgDetails[1]);
+        console.log(msgDetails[2]);
+
+        await gotify({
+            server: msgDetails[1],
+            app: msgDetails[2],
+            title: title,
+            message: message,
+            priority: 5
+        });
+  //  } catch (e) {
+    //    console.error("** Gotify Exception: " + e.message);
+   // }
 }
 
 async function sendPushover(title, message) {
-    var push = new Pushover({
-        token: msgDetails[2],
-        user: msgDetails[1],
-    });
-    push.send(title, message, function (err, res) {
-        if (err) return console.log(err);
-        console.error(res);
-    });
+    try {
+        var push = new Pushover({
+            token: msgDetails[2],
+            user: msgDetails[1],
+        });
+        push.send(title, message, function (err, res) {
+            if (err) return console.log(err);
+            console.error(res);
+        });
+    } catch (e) {
+        console.error("** Pushover Exception: " + e.message);
+    }
 }
 
 async function sendDiscord(title, message) {
-    const hook = new Webhook(msgDetails[1]);
-    hook.setUsername(title);
-    hook.setAvatar(SERVER_AVATAR);
     try {
-        await hook.send(message);
+        const hook = new Webhook(msgDetails[1]);
+        hook.setUsername(title);
+        hook.setAvatar(SERVER_AVATAR);
+        try {
+            await hook.send(message);
+        } catch (e) {
+            console.error(e.message);
+        }
     } catch (e) {
-        console.error(e.message);
+        console.error("** Discord Exception: " + e.message);
+    }
+}
+
+async function sendMatrix(title, message) {
+    try {
+        const matrixClient = Matrix.createClient({
+            baseUrl: msgDetails[1],
+            accessToken: msgDetails[3],
+            userId: "@" + msgDetails[2]
+        });
+        //# tag0 server1 user2 access-token3 room-id4
+
+        var content = new Object();
+        content.body = message;
+        content.msgtype = "m.text";
+
+        matrixClient.sendEvent(msgDetails[4], "m.room.message", content, "", (err, res) => {
+            console.log(err);
+       });
+    } catch (e) {
+        console.error("** Matrix Exception: " + e.message);
     }
 }
 
@@ -130,7 +175,7 @@ async function sendNtfyAuth(title, message) {
             iconURL: SERVER_AVATAR
         });
     } catch (e) {
-        console.error("** NTFY Exception: " + e.message);
+        console.error("** NTFY Auth Exception: " + e.message);
     }
 }
 
@@ -189,6 +234,9 @@ async function send(message) {
             break;
         case "gotify":
             sendGotify(title, message);
+            break;
+        case "matrix":
+            sendMatrix(title, message);
             break;
         case "default":
             // do nothing
