@@ -51,7 +51,7 @@ services:
       ONLY_OFFLINE_STATES: 'false'
       # [Optional] - Regardless of any other settings, you can ignore or include 'exited'
       EXCLUDE_EXITED: 'false'      
-      # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, which is also the minimum. (recommended 30, to reduce number of messages sent)
+      # [Optional] - Set the poll period in seconds. Defaults to 10 seconds, recommended 30.
       PERIOD: 30
       # [Optional] - Suppress startup messages from being sent. Default is false
       DISABLE_STARTUP_MSG: 'false'
