@@ -64,13 +64,13 @@ services:
 | MESSAGE_PLATFORM  |   True        | Specify 'ONE' messaging platform.|
 
 > **Pushbullet:**  'pushbullet@your_api_key@your_device_id'
-> **Pushover:** 'pushover@your_user_key@your_app_api_token'
-> **Discord:** 'discord@webhook_url'
-> **NTFY:** 'ntfy@topic_title'
-> **Slack:** 'slack@bot_user_oauth_token@your_chat_id'
-> **Gotify:** 'gotify@server_url@app_token'
-> **Telegram:** 'telegram@your_bot_id@your_chat_id'
-> **Matrix:** 'matrix@https://matrix.org@user:matrix.org@access-token@room-id:matrix.org'
+> **Pushover:**  'pushover@your_user_key@your_app_api_token'
+> **Discord:**  'discord@webhook_url'
+> **NTFY:**  'ntfy@topic_title'
+> **Slack:**  'slack@bot_user_oauth_token@your_chat_id'
+> **Gotify:**  'gotify@server_url@app_token'
+> **Telegram:**  'telegram@your_bot_id@your_chat_id'
+> **Matrix:**  'matrix@https://matrix.org@user:matrix.org@access-token@room-id:matrix.org'
 > _(For Matrix, add the userid 'without' the leading @ sign. Values are server, userid, access-token, room-id)_
 
 > #### Advanced NTFY Setting
