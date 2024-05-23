@@ -16,6 +16,7 @@ Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 - Ntfy
 - Slack
 - Gotify
+- Matrix
 
 ## Future Considerations
 - Additional messaging platform support
