@@ -62,6 +62,7 @@ services:
 | DISABLE_STARTUP_MSG |     False     | Suppresses startup messages from being sent. Default is false |
 | SHA                 |     False     | Will include the container SHA ID in sent messages |
 | MESSAGE_PLATFORM  |   True        | Specify 'ONE' messaging platform.|
+
 > **Pushbullet:**  'pushbullet@your_api_key@your_device_id'
 > **Pushover:** 'pushover@your_user_key@your_app_api_token'
 > **Discord:** 'discord@webhook_url'
@@ -71,7 +72,6 @@ services:
 > **Telegram:** 'telegram@your_bot_id@your_chat_id'
 > **Matrix:** 'matrix@https://matrix.org@user:matrix.org@access-token@room-id:matrix.org'
 > _(For Matrix, add the userid 'without' the leading @ sign. Values are server, userid, access-token, room-id)_
->
 
 > #### Advanced NTFY Setting
 > Use these settings if you host your own Ntfy server, or otherwise require authentication to connect. 
