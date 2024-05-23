@@ -1,7 +1,7 @@
 # Monocker
 Monitors Docker (MONitors dOCKER) containers and alerts on 'state' change.
 
-![image](/doco/title.PNG)
+![image](doco/title.PNG)
 
 ## Features
 - Monitors 'state' changes for all containers (every 10 seconds)
@@ -70,7 +70,7 @@ services:
 - For Discord: See Discord doco for how to create a webhook and get the url
 - For Slack: See [documentation](doco/slack.md) for how to obtain ID values.
 - For Ntfy: create a new topic on https://ntfy.sh/app, use the name of the topic as follows: ntfy@MY_TOPIC_TITLE
-- For Matrix, review these images for how to get [userID](/doc/matrix-user-id.png), [roomID](/doc/matrix-room-id.png), and [Access token](/doc/matrix-access-token.png)
+- For Matrix, review these images for how to get [userID](doc/matrix-user-id.png), [roomID](doc/matrix-room-id.png), and [Access token](doc/matrix-access-token.png)
 
   If you would like to use your own ntfy server you can add the environment variable `CUSTOM_NTFY_SERVER`
   
