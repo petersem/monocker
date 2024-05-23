@@ -71,7 +71,7 @@ services:
 - For Slack: See [documentation](doco/slack.md) for how to obtain ID values.
 - For Ntfy: create a new topic on https://ntfy.sh/app, use the name of the topic as follows: ntfy@MY_TOPIC_TITLE
 - For Matrix, review these images for how to get [userID](https://github.com/petersem/monocker/blob/master/doco/matrix-user-id.png?raw=true), [roomID](https://github.com/petersem/monocker/blob/master/doco/matrix-room-id.png?raw=true), and [Access token](https://github.com/petersem/monocker/blob/master/doco/matrix-access-token.png?raw=true)
-
+  
   If you would like to use your own ntfy server you can add the environment variable `CUSTOM_NTFY_SERVER`
   
   If you would like to use a username and password (either on ntfy.sh or on your own server), uncomment the variables `NTFY_USER` and `NTFY_PASS`
