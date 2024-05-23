@@ -64,13 +64,13 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
 ```
-- For Telegram: See [video](doco/telegram_chatid.mkv) and use this link for how to obtain ID values. https://api.telegram.org/bot%7Bbot-id%7D/getUpdates
+- For Telegram: See [video](https://github.com/petersem/monocker/raw/master/doco/telegram_chatid_botid.mkv) and use this link for how to obtain ID values. https://api.telegram.org/bot%7Bbot-id%7D/getUpdates
 - For Pushbullet: Open Pushbullet in a browser and get device ID from URL [Example](https://raw.githubusercontent.com/petersem/monocker/master/doco/pbdeviceid.PNG)
 - For Pushover: See pushover doco for user key and app token
 - For Discord: See Discord doco for how to create a webhook and get the url
 - For Slack: See [documentation](doco/slack.md) for how to obtain ID values.
 - For Ntfy: create a new topic on https://ntfy.sh/app, use the name of the topic as follows: ntfy@MY_TOPIC_TITLE
-- For Matrix, review these images for how to get [userID](/doc/matrix-user-id.png), [roomID](/doc/matrix-room-id.png), and [Access token](/doc/matrix-access-token.png)
+- For Matrix, review these images for how to get [userID](https://github.com/petersem/monocker/blob/master/doco/matrix-user-id.png?raw=true), [roomID](https://github.com/petersem/monocker/blob/master/doco/matrix-room-id.png?raw=true), and [Access token](https://github.com/petersem/monocker/blob/master/doco/matrix-access-token.png?raw=true)
 
   If you would like to use your own ntfy server you can add the environment variable `CUSTOM_NTFY_SERVER`
   
