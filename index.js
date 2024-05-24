@@ -9,20 +9,52 @@ import { NtfyClient } from 'ntfy';
 import { WebClient } from '@slack/web-api';
 import { gotify } from 'gotify';
 import Matrix from "matrix-js-sdk";
+import express from 'express';
+import axios from 'axios';
 
 process.on('warning', (warning) => {
     console.log(warning.stack);
 });
-// for health check
-import http from "http";
-const host = 'localhost';
-const port = 8000;
-const requestListener = function (req, res) {
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// app.get('/', function(req, res) {
+//     res.writeHead(200);
+//     res.end("Monocker is functional!");
+// });
+
+app.get('/status', function(req, res) {
+    const status = {'status': 'healthy', 'messages-sent-since-started': messageCountSinceStart }
+    res.setHeader('Content-Type', 'application/json');
     res.writeHead(200);
-    res.end("Monocker is functional!");
-};
-const server = http.createServer(requestListener);
-server.listen(port, host, () => {});
+    res.end(JSON.stringify(status) + '\r\n');
+});
+
+// Experimental! You must add a "PORTS: - custom_port:8000" entry to your YAML for this to be availlable
+app.post('/send', (req, res) => {
+    const hasValue = (obj, value) => Object.values(obj).includes(value);
+    const hasKey = (obj, key) => Object.keys(obj).includes(key);
+    let hasTitle = hasKey(req.body, 'title');
+    let hasMsg = hasKey(req.body, 'msg');
+    let title = req.body.title;
+    let msg = req.body.msg; 
+    
+    if(hasMsg){
+        // send a message
+        send(msg, title);
+        res.writeHead(200);
+        res.end('Success\n\r');
+    }
+    else {
+        // let's make out there is nothing on this route
+        res.writeHead(401);
+        res.end('Page not found\n\r');
+    }
+});
+
+app.listen(8000);
 
 // main program
 let docker = new Docker({socketPath: '/var/run/docker.sock'});
@@ -38,6 +70,7 @@ const SHA = process.env.SHA || 'false';
 if(process.env.PERIOD == "" || process.env.PERIOD === undefined || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
 const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
+let messageCountSinceStart = 0 
 
 // NTFY settings
 const CUSTOM_NTFY_SERVER = process.env.CUSTOM_NTFY_SERVER || null;
@@ -93,10 +126,7 @@ async function sendPushbullet(title, message) {
 }
 
 async function sendGotify(title, message) {
-//    try {
-        console.log(msgDetails[1]);
-        console.log(msgDetails[2]);
-
+   try {
         await gotify({
             server: msgDetails[1],
             app: msgDetails[2],
@@ -104,9 +134,9 @@ async function sendGotify(title, message) {
             message: message,
             priority: 5
         });
-  //  } catch (e) {
-    //    console.error("** Gotify Exception: " + e.message);
-   // }
+   } catch (e) {
+       console.error("** Gotify Exception: " + e.message);
+   }
 }
 
 async function sendPushover(title, message) {
@@ -208,9 +238,40 @@ async function sendSlack(title, message) {
     }
 }
 
-async function send(message) {
+async function sendApprise(aTitle, message) {
+    let url =  msgDetails[1] + '/notify/' + msgDetails[2] + '/?tags=' + msgDetails[3];
+
+
+    await axios.post(url, {
+        title: aTitle,
+        body: message,
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+    .then(function (response) {
+      //  console.log(response);
+      })
+      .catch(function (error) {
+        console.log("** Apprise execption" + error);
+      });
+
+}
+
+
+async function send(message, extTitle) {
     let title = "MONOCKER";
-    if (SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")";
+    if(extTitle != null){
+        title = extTitle
+        if (SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")";
+    }
+    else{
+        if (SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")";
+    }
+    
+    messageCountSinceStart+=1
 
     switch (msgDetails[0].toLowerCase()) {
         case "telegram":
@@ -237,6 +298,9 @@ async function send(message) {
             break;
         case "matrix":
             sendMatrix(title, message);
+            break;
+        case "apprise":
+            sendApprise(title, message);
             break;
         case "default":
             // do nothing

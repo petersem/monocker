@@ -11,6 +11,6 @@ RUN apk add --update nodejs npm
 COPY --from=builder /usr/src/app /app
 WORKDIR /app
 
-EXPOSE 3000
-HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=5s CMD wget --spider http://localhost:8000 > /dev/null || exit 1
+EXPOSE 8000
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=5s CMD wget --spider http://localhost:8000/status > /dev/null || exit 1
 CMD ["node", "index.js"]

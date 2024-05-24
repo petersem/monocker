@@ -17,6 +17,7 @@
 - Slack
 - Gotify
 - Matrix
+- Apprise
 
 ## Future Considerations
 - Additional messaging platform support
@@ -70,6 +71,8 @@ services:
 > - 'slack@bot_user_oauth_token@your_chat_id'
 > - 'gotify@server_url@app_token'
 > - 'telegram@your_bot_id@your_chat_id'
+> - 'apprise@apprise_url@config_id@tag'
+> _(Only one tag is supported, and server_avatar is not currently supported)_
 > - 'matrix@https://matrix.org@user:matrix.org@access-token@room-id:matrix.org'
 > _(For Matrix, add the userid 'without' the leading @ sign. Values are server, userid, access-token, room-id)_
 
@@ -106,6 +109,7 @@ services:
 - For Discord: See Discord doco for how to create a webhook and get the url
 - For Slack: See [documentation](doco/slack.md) for how to obtain `ID` values.
 - For Ntfy: create a new topic on https://ntfy.sh/app (or your own server), use the name of the topic as follows: ntfy@MY_TOPIC_TITLE
+- For Apprise: please review official documentation. [here](https://github.com/caronc/apprise)
 - For Matrix, review these images for how to get [userID](https://github.com/petersem/monocker/blob/master/doco/matrix-user-id.png?raw=true), [roomID](https://github.com/petersem/monocker/blob/master/doco/matrix-room-id.png?raw=true), and [Access token](https://github.com/petersem/monocker/blob/master/doco/matrix-access-token.png?raw=true)
 
 ## Thank you!
