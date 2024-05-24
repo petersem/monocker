@@ -1,6 +1,6 @@
 {
   "name": "monocker",
-  "version": "2.12.0",
+  "version": "2.13.0",
   "description": "Monitors and alerts for docker containers state changes",
   "type": "module",
   "main": "index.js",
@@ -29,6 +29,7 @@
   "homepage": "https://github.com/petersem/monocker#readme",
   "dependencies": {
     "@slack/web-api": "^7.0.4",
+    "axios": "^1.7.2",
     "discord-webhook-node": "^1.1.8",
     "dockerode": "^4.0.2",
     "express": "^4.19.2",
