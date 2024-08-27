@@ -83,16 +83,16 @@ let monContainers = [];
 let offlineStates = ["exited", "dead", "running (unhealthy)", "paused"];
 let runClock;
 
-console.log("-------------------------------------------------------");
+console.log("---------------------------------------------------");
 console.log(" Monocker - MONitor dOCKER container states");
 console.log(" Developed by Matt Petersen - Brisbane Australia");
 console.log(" Donate: https://www.paypal.com/paypalme/thanksmp")
 console.log(" ");
 console.log(" Version: " + pjson.version);
-console.log("-------------------------------------------------------");
+console.log("---------------------------------------------------");
 console.log(" ");
 
-console.log(`Monitoring started 
+console.log(`Settings 
      - Version: ` + pjson.version + `
      - Messaging platform: ` + MESSAGE_PLATFORM.split("@")[0] + `
      - Polling period: ` + PERIOD + ` seconds 
@@ -101,8 +101,9 @@ console.log(`Monitoring started
      - Do not monitor 'Exited': ` + EXCLUDE_EXITED + `
      - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase() + `
      - Display SHA ID: ` + SHA);
-
-console.log()
+console.log("---------------------------------------------------");
+console.log(" ");
+console.log('Monitoring started'); 
 
 async function sendTelegram(message) {
     try {
@@ -358,17 +359,17 @@ async function list() {
                             // if only offline is set, then only show state changes that are offline
                             var output = c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus;
                             if (SHA.toLowerCase() == 'true') {
-                                output += " " + c.ImageID
+                                output += " " + c.Id; 
                             }
                             if (ONLY_OFFLINE_STATES == 'true') {
                                 if (offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)) {
-                                    console.log("     - " + output);
+                                    console.log("      - " + output);
                                     //send(output);
                                     messages += output + "\r\n";
                                 }
                             }
                             else {
-                                console.log("    - " + output);
+                                console.log("     - " + output);
                                 //send(output);
                                 messages += output + "\r\n";
                             }
@@ -409,7 +410,7 @@ async function list() {
                     if(SHA.toLowerCase()=='true'){
                         output += " " + c.ImageID
                     }
-                    console.log("    - " + output);
+                    console.log("     - " + output);
                     //send(output)
                     messages += output + "\r\n";
                 }
