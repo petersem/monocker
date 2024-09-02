@@ -352,7 +352,7 @@ async function list() {
                     if (c.Status.includes("(unhealthy)")) hcStatus = "(unhealthy)"
                     if (monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0) {
                         // exclude exited status if set
-                        if ((EXCLUDE_EXITED == 'true' && c.State.toLocaleLowerCase() == 'exited') || (typeof query !== 'undefined' && query)) {
+                        if ((EXCLUDE_EXITED == 'true' && c.State.toLocaleLowerCase() == 'exited') || ((typeof query !== 'undefined' && query) || c.Id)) {
                             // ignore 
                         }
                         else {
@@ -405,7 +405,7 @@ async function list() {
             monContainers.forEach(c => {
                 let delArray = newConArray.filter(nc => nc.includes(c.split(",")[0]));
                 // if no match in history array and latest scan, then is deleted
-                if((delArray.length==0 && EXCLUDE_EXITED !== 'true') || (typeof c.Id !== 'undefined' && c.Id)){
+                if((delArray.length==0 && EXCLUDE_EXITED !== 'true') || (typeof c.Id !== 'undefined' || c.Id)){
                     var output = c.split(",")[2].replace("/","") + ": exited"
                     if(SHA.toLowerCase()=='true'){
                         output += " " + c.Id
