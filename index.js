@@ -276,7 +276,8 @@ async function send(message, extTitle) {
 
     switch (msgDetails[0].toLowerCase()) {
         case "telegram":
-            sendTelegram(`<b>` + title + `</b>` + message);
+            sendTelegram(`<b>` + title + `</b>
+` + message);
             break;
         case "pushbullet":
             sendPushbullet(title, message);

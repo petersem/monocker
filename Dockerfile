@@ -1,4 +1,4 @@
-FROM node:22-alpine3.18 as builder
+FROM node:22-alpine3.18 AS builder
 WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "index.js", "./"]
 RUN apk add --update nodejs npm
@@ -6,7 +6,7 @@ RUN apk add --update nodejs npm
 COPY ["package.json", "package-lock.json*", "index.js", "./"]
 RUN npm install --omit=dev
 
-FROM alpine:3.18 as deploy
+FROM alpine:3.18 AS deploy
 RUN apk add --update nodejs npm
 COPY --from=builder /usr/src/app /app
 WORKDIR /app
