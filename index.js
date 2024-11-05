@@ -66,6 +66,7 @@ const LABEL_ENABLE = process.env.LABEL_ENABLE || 'false';
 const ONLY_OFFLINE_STATES = process.env.ONLY_OFFLINE_STATES || 'false';
 const EXCLUDE_EXITED = process.env.EXCLUDE_EXITED || 'false';
 const SHA = process.env.SHA || 'false';
+
 // Default to 10 seconds if less than 10, blank or undefined.
 if(process.env.PERIOD == "" || process.env.PERIOD === undefined || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
@@ -102,6 +103,10 @@ console.log(`Settings
      - Disable Startup Messages: ` + DISABLE_STARTUP_MSG.toLowerCase() + `
      - Display SHA ID: ` + SHA);
 console.log("---------------------------------------------------");
+
+// send warning message if platform discord and label contains discord. 
+if(MESSAGE_PLATFORM.includes('discord') && SERVER_LABEL.toLowerCase().includes("discord")){ console.log("**'Discord' is restricted in msg titles: renaming")}
+
 console.log(" ");
 console.log('Monitoring started'); 
 
@@ -156,6 +161,9 @@ async function sendPushover(title, message) {
 }
 
 async function sendDiscord(title, message) {
+    // fix title if it contains the restricted word Discord. 
+    title = title.replace("discord","Ðiscord").replace("Discord","Ðiscord");
+
     try {
         const hook = new Webhook(msgDetails[1]);
         hook.setUsername(title);
