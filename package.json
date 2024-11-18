@@ -34,7 +34,7 @@
     "dockerode": "^4.0.2",
     "express": "^4.19.2",
     "gotify": "^1.1.0",
-    "matrix-js-sdk": "^34.9.0",
+    "matrix-js-sdk": "^34.11.1",
     "node-pushover": "^1.0.0",
     "ntfy": "^1.5.3",
     "pushbullet": "^3.0.0",
