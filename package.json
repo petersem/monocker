@@ -29,7 +29,7 @@
   "homepage": "https://github.com/petersem/monocker#readme",
   "dependencies": {
     "@slack/web-api": "^7.0.4",
-    "axios": "^1.7.2",
+    "axios": "^1.7.8",
     "discord-webhook-node": "^1.1.8",
     "dockerode": "^4.0.2",
     "express": "^4.19.2",
