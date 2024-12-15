@@ -6,7 +6,7 @@ RUN apk add --update nodejs npm
 COPY ["package.json", "package-lock.json*", "index.js", "./"]
 RUN npm install --omit=dev
 
-FROM alpine:3.18 AS deploy
+FROM alpine:3.21.0 AS deploy
 RUN apk add --update nodejs npm
 COPY --from=builder /usr/src/app /app
 WORKDIR /app
