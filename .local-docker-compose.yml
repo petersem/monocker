@@ -1,0 +1,18 @@
+version: "3.2"
+
+services:
+  monocker:
+    container_name: monocker
+    image: petersem/monocker
+    environment:
+      MESSAGE_PLATFORM: ${MESSAGE_PLATFORM}
+      ONLY_OFFLINE_STATES: ${ONLY_OFFLINE_STATES}
+      EXCLUDE_EXITED: ${EXCLUDE_EXITED}
+      SERVER_LABEL: ${SERVER_LABEL}
+      PERIOD: ${PERIOD}
+      DISABLE_STARTUP_MSG: ${DISABLE_STARTUP_MSG}
+      NEWRELIC_API_KEY: ${NEWRELIC_API_KEY}
+      NEWRELIC_ENDPOINT: ${NEWRELIC_ENDPOINT}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped

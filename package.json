@@ -32,6 +32,7 @@
     "axios": "^1.7.2",
     "discord-webhook-node": "^1.1.8",
     "dockerode": "^4.0.2",
+    "dotenv": "^16.4.7",
     "express": "^4.19.2",
     "gotify": "^1.1.0",
     "matrix-js-sdk": "^34.9.0",

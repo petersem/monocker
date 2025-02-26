@@ -14,3 +14,4 @@ WORKDIR /app
 EXPOSE 8000
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=5s CMD wget --spider http://localhost:8000/status > /dev/null || exit 1
 CMD ["node", "index.js"]
+

@@ -15,14 +15,14 @@ services:
       EXCLUDE_EXITED: $EXCLUDE_EXITED
       PERIOD: $PERIOD
       DISABLE_STARTUP_MSG: $DISABLE_STARTUP_MSG
-      SHA: 'false'
-      CUSTOM_NTFY_SERVER: $CUSTOM_NTFY_SERVER 
-      NTFY_USER: $NTFY_USER 
+      SHA: "false"
+      CUSTOM_NTFY_SERVER: $CUSTOM_NTFY_SERVER
+      NTFY_USER: $NTFY_USER
       NTFY_PASS: $NTFY_PASS
+      NEWRELIC_API_KEY: ${NEWRELIC_API_KEY}
+      NEWRELIC_ENDPOINT: ${NEWRELIC_ENDPOINT}
     ports:
       - 1212:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
-
-
