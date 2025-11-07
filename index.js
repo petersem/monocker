@@ -39,8 +39,8 @@ app.post('/send', (req, res) => {
     let hasTitle = hasKey(req.body, 'title');
     let hasMsg = hasKey(req.body, 'msg');
     let title = req.body.title;
-    let msg = req.body.msg; 
-    
+    let msg = req.body.msg;
+
     if(hasMsg){
         // send a message
         send(msg, title);
@@ -71,7 +71,7 @@ const SHA = process.env.SHA || 'false';
 if(process.env.PERIOD == "" || process.env.PERIOD === undefined || process.env.PERIOD < 10) {process.env.PERIOD = 10;}
 const PERIOD = process.env.PERIOD;
 const DISABLE_STARTUP_MSG = process.env.DISABLE_STARTUP_MSG || 'false';
-let messageCountSinceStart = 0 
+let messageCountSinceStart = 0
 
 // NTFY settings
 const CUSTOM_NTFY_SERVER = process.env.CUSTOM_NTFY_SERVER || null;
@@ -104,11 +104,11 @@ console.log(`Settings
      - Display SHA ID: ` + SHA);
 console.log("---------------------------------------------------");
 
-// send warning message if platform discord and label contains discord. 
+// send warning message if platform discord and label contains discord.
 if(MESSAGE_PLATFORM.includes('discord') && SERVER_LABEL.toLowerCase().includes("discord")){ console.log("**'Discord' is restricted in msg titles: renaming")}
 
 console.log(" ");
-console.log('Monitoring started'); 
+console.log('Monitoring started');
 
 async function sendTelegram(message) {
     try {
@@ -161,7 +161,7 @@ async function sendPushover(title, message) {
 }
 
 async function sendDiscord(title, message) {
-    // fix title if it contains the restricted word Discord. 
+    // fix title if it contains the restricted word Discord.
     title = title.replace("discord","Ðiscord").replace("Discord","Ðiscord");
 
     try {
@@ -279,7 +279,7 @@ async function send(message, extTitle) {
     else{
         if (SERVER_LABEL.length !== 0) title += " (" + SERVER_LABEL + ")";
     }
-    
+
     messageCountSinceStart+=1
 
     switch (msgDetails[0].toLowerCase()) {
@@ -362,14 +362,14 @@ async function list() {
                     if (monContainers.includes(c.Id + "," + c.State + "," + c.Names[0] + "," + hcStatus) == false && monContainers.length !== 0) {
                         // exclude exited status if set
                         if ((EXCLUDE_EXITED == 'true' && c.State.toLocaleLowerCase() == 'exited') && (typeof c.Id !== 'undefined' && c.Id)) {
-                            // ignore 
+                            // ignore
                             //console.log('ignore exited',c.Id,c.State,c.Names[0],hcStatus)
                         }
                         else {
                             // if only offline is set, then only show state changes that are offline
                             var output = c.Names[0].replace("/", "") + ": " + c.State + " " + hcStatus;
                             if (SHA.toLowerCase() == 'true') {
-                                output += " " + c.Id; 
+                                output += " " + c.Id;
                             }
                             if (ONLY_OFFLINE_STATES == 'true') {
                                 if (offlineStates.includes(c.State) || offlineStates.includes(c.State + " " + hcStatus)) {
@@ -413,12 +413,13 @@ async function list() {
         // check if any containers have been deleted between scans
         if(monContainers.length !== 0 ){
             monContainers.forEach(c => {
-                let delArray = newConArray.filter(nc => nc.includes(c.split(",")[0]));
+                const id = c.split(",")[0]
+                let delArray = newConArray.filter(nc => nc.includes(id));
                 // if no match in history array and latest scan, then is deleted
-                if((delArray.length==0 && EXCLUDE_EXITED !== 'true') && (typeof c.Id !== 'undefined' && c.Id)){
+                if((delArray.length==0 && EXCLUDE_EXITED !== 'true') && (typeof id !== 'undefined' && id)){
                     var output = c.split(",")[2].replace("/","") + ": exited"
                     if(SHA.toLowerCase()=='true'){
-                        output += " " + c.Id
+                        output += " " + id
                         console.log(c);
                     }
                     console.log("     - " + output);
