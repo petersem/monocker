@@ -29,14 +29,14 @@
   "homepage": "https://github.com/petersem/monocker#readme",
   "dependencies": {
     "@slack/web-api": "^7.0.4",
-    "axios": "^1.7.2",
+    "axios": "^1.13.5",
     "discord-webhook-node": "^1.1.8",
     "dockerode": "^4.0.2",
-    "express": "^4.19.2",
+    "express": "^4.22.0",
     "gotify": "^1.1.0",
     "matrix-js-sdk": "^34.9.0",
     "node-pushover": "^1.0.0",
-    "ntfy": "^1.5.3",
+    "ntfy": "^1.10.0",
     "pushbullet": "^3.0.0",
     "telegram-notify": "^1.3.3"
   }
